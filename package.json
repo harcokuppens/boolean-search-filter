@@ -1,0 +1,12 @@
+{
+    "type": "module",
+    "scripts": {
+        "start": "node out/main.js"
+    },
+    "devDependencies": {
+        "@types/node": "^22.13.4"
+    },
+    "dependencies": {
+        "antlr4": "file:antlr4-4.13.2.tgz"
+    }
+}
