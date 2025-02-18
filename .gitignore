@@ -1,2 +1,5 @@
-/generated/
+**/generated/
 /dist/
+*.sw*
+out/
+node_modules/
