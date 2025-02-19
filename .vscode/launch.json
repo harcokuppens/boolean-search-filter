@@ -23,7 +23,9 @@
       "type": "msedge",
       "name": "Launch bibber.html in webserver (requires Webserver task running)",
       "request": "launch",
-      "url": "http://localhost:4444/bibber.html"
+      "url": "http://localhost:4444/bibber.html",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/out/**/*.js"]
     }
   ]
 }

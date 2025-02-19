@@ -49,10 +49,12 @@ export class EvalVisitor extends LabeledExprVisitor<number> {
      * @return the visitor result
      */
     visitProg = (ctx: ProgContext): number => {
+        let lastValue = 0;
         for (var child of ctx.stat_list()) {
-            this.visit(child);
+            lastValue = this.visit(child);
         }
-        return 0; // return dummy value
+        return lastValue;
+        //return 0; // return dummy value
     }
 
 
@@ -70,7 +72,8 @@ export class EvalVisitor extends LabeledExprVisitor<number> {
     visitPrintExpr = (ctx: PrintExprContext): number => {
         const value = this.visit(ctx.expr()); // evaluate the expr child
         console.log(value); // print the result
-        return 0; // return dummy value
+        //return 0; // return dummy value
+        return value;
     }
 
     /** INT */
