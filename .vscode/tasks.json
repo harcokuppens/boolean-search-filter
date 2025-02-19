@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Webserver",
+      "type": "shell",
+      "command": "lsof -i :4444 || npx serve -l 4444 . ",
+      "isBackground": true,
+      "problemMatcher": []
+    }
+  ]
+}

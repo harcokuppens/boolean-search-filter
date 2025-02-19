@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "declaration": true,
-
     // browser and nodejs environments compatible configuration. See: /Users/harcok/Documents/help/programming/typescript/tsconfig.json_for_both_node_as_web.txt
+
+    "target": "es2022", // how modern the javascript code is which gets generated
     "module": "esnext",
     "moduleResolution": "bundler",
-    "target": "es2022",
-
+    //"moduleResolution": "node",
 
     "outDir": "out",
     "removeComments": true,
@@ -17,13 +17,7 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "strictNullChecks": true
-    // "baseUrl": "./",
-    // "paths": {
-    //   "antlr4": ["/Users/harcok/node_modules/antlr4/dist/antlr4.node.cjs"]
-    // },
     // "allowJs": true, // Allow importing JavaScript files (important for `antlr4` runtime).
-    // "moduleResolution": "node", // Use Node.js module resolution.
-    // "esModuleInterop": true // Ensure compatibility with CommonJS/ESM modules.
   },
   "compileOnSave": true,
   "include": ["src/**/*.ts", "test/**/*.ts"]

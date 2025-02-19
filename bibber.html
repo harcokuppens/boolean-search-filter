@@ -1,13 +1,20 @@
 <body >
 
-  <script type="module" src="out/main.js"></script>
-  <!-- <script type="module" src="antlr4.web.mjs"></script> -->
-
+ 
+<!-- make  'import ... from "antlr4"' work in your js/ts code!  -->
+<script type="importmap">
+{
+    "imports": {
+         "antlr4": "./node_modules/antlr4/dist/antlr4.web.mjs"
+    }
+}
+</script>
+<script type="module" src="./out/main.js"></script>
 
   <h1>Hello Wooorld!</h1>
   <form id="searchForm">
-    <input id="searchbox" type="text"> 
-    <button id="button"  type="button" >Search</button>
+    <input id="searchbox" type="text"  aria-label="Search text"> 
+    <button id="button"  type="button"   aria-label="Do Search">Search</button>
   </form>
   <ol id="wikitext">
     <h1>
