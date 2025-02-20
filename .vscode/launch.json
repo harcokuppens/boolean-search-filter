@@ -7,7 +7,7 @@
     {
       "type": "node", // launch without browser to test code without browser
       "request": "launch",
-      "name": "Launch Program main",
+      "name": "Launch main.js in node",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/src/main.ts",
       "preLaunchTask": "tsc: build - tsconfig.json",
@@ -21,7 +21,7 @@
     // },
     {
       "type": "msedge",
-      "name": "Launch bibber.html in webserver (requires Webserver task running)",
+      "name": "Launch bibber.html(and main.js ) in webserver (requires Webserver task running)",
       "request": "launch",
       "url": "http://localhost:4444/bibber.html",
       "preLaunchTask": "tsc: build - tsconfig.json",

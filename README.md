@@ -1,4 +1,25 @@
-# Simple expression evaluator in typescript
+# Boolean search
+
+On websites listing many items one sometimes wants to filter the items listed. This
+project provides a boolean expression evaluator in typescript with which you can
+create a boolean expression with some search words.
+
+Example:
+
+```
+   ("machine learning" OR "artificial intelligence") AND NOT "image recognition"
+```
+
+In typescript code we parse a boolean expression of strings, to filter which set of
+items out of a list of items should be displayed in an html page.
+
+The boolean expression is applied to each item, and when `true` the item is selected
+to be shown in html, and when `false` the item is hidden in html, causing only `true`
+items to be shown.
+
+The boolean expression contains strings, where each string is only evaluated true
+when this string is contained (case insensitive) in the item. Only when the complete
+boolean expression is `true` on the item, only then it will be shown.
 
 ## Sources
 
@@ -15,7 +36,7 @@
 
 ## How to use
 
-build
+First build with a bash script:
 
 ```bash
 ./build.bash
@@ -34,19 +55,33 @@ npm install # install dependencies of project defined in package.json
 tsc  # compile typescript code to javascript
 ```
 
-Run `out/main.js` with `node`:
+Then run `out/main.js` with `node.js` execution environment (none-browser) :
 
 ```bash
 node out/main.js # run generated javascript main.js.  You could also run 'npm run start'
 ```
 
-Run `bibber.html` in webserver:
+Or run the `main.js` via `bibber.html` in a browser using a fresh launched webserver:
 
 ```bash
 ./launch_in_webserver.bash
 ```
 
-distribute:
+## How to debug
+
+In vscode there are two debug modes:
+
+- "Launch main.js in node" Debug `main.js` in the node.js execution environment. All
+  browser specific code in main.js is disabled.
+- "Launch bibber.html(and main.js ) in webserver (requires Webserver task running)"
+  Debug `main.js` in browser execution environment. Before lauching this debug mode
+  your first have to launch the "Start Webserver" task. When launched the Edge
+  browser is opened with the `bibber.html` file. You can place breakpoints in your
+  typescript code. When an action in the browser causes javascript code to execute,
+  the debugger will stop at the related line of code in your typescript source using
+  map files.
+
+## How to distribute
 
 ```sh
 ./distribute.bash
@@ -56,13 +91,16 @@ This will place all the necessary files in `dist/`, including an optimized versi
 `antlr4.web.mjs`. You can copy the content of this folder to a webserver and open
 `bibber.html` and everything should work.
 
-cleanup
+## Cleanup project for git
 
 ```bash
 ./clean.bash
 ```
 
-## appendix: antlr for debugging
+All generated files are cleaned up. All what remains is not redundant, and should be
+committed to git.
+
+## Appendix: antlr for debugging
 
 When having a webpack file debugging is an hassle because the source in it is
 minimized. When we step into code at some point we see minimized (javascript) code in
