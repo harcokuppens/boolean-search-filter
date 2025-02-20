@@ -1,21 +1,23 @@
-import { evalString } from './evalString.js';
+
 import BooleanExprVisitor from './generated/BooleanExprVisitor.js';
-//import { AndExprContext, OrExprContext, ParenExprContext, StringExprContext, ImplicitOrExprContext } from './generated/BooleanExprParser.js';
 import { AndExprContext, OrExprContext, ParenExprContext, StringExprContext, ImplicitAndExprContext, NotExprContext } from './generated/BooleanExprParser.js';
 
-//declare function evalString(input: string): boolean;
+
+function matchWordInTextCaseInsensitive(word: string, text: string): boolean {
+    return text?.toLowerCase().includes(word.toLowerCase()) ?? false;
+}
 
 export class EvalVisitor extends BooleanExprVisitor<boolean> {
     protected defaultResult(): boolean {
         return false;
     }
 
-    private extraParam: string;
+    private textToMatch: string;
     private stringValues: string[] = [];
 
-    constructor(extraParam: string) {
+    constructor(textToMatch: string) {
         super();
-        this.extraParam = extraParam;
+        this.textToMatch = textToMatch;
     }
 
 
@@ -62,7 +64,7 @@ export class EvalVisitor extends BooleanExprVisitor<boolean> {
         // Remove surrounding quotes if present
         const unquotedStr = str.startsWith('"') && str.endsWith('"') ? str.slice(1, -1) : str;
         this.stringValues.push(unquotedStr);
-        return evalString(unquotedStr, this.extraParam);
+        return matchWordInTextCaseInsensitive(unquotedStr, this.textToMatch);
     }
 
     getStringValues(): string[] {

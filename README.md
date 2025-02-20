@@ -2,14 +2,28 @@
 
 ## Sources
 
-- grammar/LabeledExpr.g4
-- src/main.ts
-- src/EvalVisitor.ts
+- grammar/LabeledExpr.g4 - ANTLR4 grammar for boolean expression
+- src/main.ts - main script which runs given boolean expression agains a list of text
+  items, only the items which are evaluated true are shown in html; false items are
+  hidden in html.
+- src/EvalVisitor.ts - evaluates boolean expression where each STRING in the boolean
+  expression is matched against given text giving true if matched and false if not
+  matched. The STRINGs evaluated to a boolean value are combined in the boolean
+  expression to give an overall boolean value.
+- src/WordsVisitor.ts - gets all words used in the boolean expression to make them
+  highlighted in the match shown in html
 
 ## How to use
 
-```bash
+build
 
+```bash
+./build.bash
+```
+
+The build script does
+
+```bash
 npm install # install dependencies of project defined in package.json
             # to install antlr4 without minimized source:
             #     npm uninstall antlr4
@@ -18,15 +32,34 @@ npm install # install dependencies of project defined in package.json
 
 ./generate.bash # generate type script from grammar in src/generated
 tsc  # compile typescript code to javascript
-node out/main.js # run generated javascript main.js.  You could also run 'npm run start'
-
 ```
+
+Run `out/main.js` with `node`:
+
+```bash
+node out/main.js # run generated javascript main.js.  You could also run 'npm run start'
+```
+
+Run `bibber.html` in webserver:
+
+```bash
+./launch_in_webserver.bash
+```
+
+distribute:
+
+```sh
+./distribute.bash
+```
+
+This will place all the necessary files in `dist/`, including an optimized version of
+`antlr4.web.mjs`. You can copy the content of this folder to a webserver and open
+`bibber.html` and everything should work.
 
 cleanup
 
 ```bash
-
-rm -rf node_modules/ src/generated/ out/
+./clean.bash
 ```
 
 ## appendix: antlr for debugging
