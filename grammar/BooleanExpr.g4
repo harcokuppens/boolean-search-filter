@@ -12,10 +12,11 @@ expr:  NOT expr       # NotExpr
 
 
 
-AND: 'AND' | '&&' ;
-OR: 'OR'  | '||' ;
+AND:  'AND' | '&&' | '&' ;
+OR: 'OR'  | '||' | '|';
 NOT: 'NOT' | '!' ;
-STRING: '"' (~["\r\n])* '"' | ~[ \t\r\n()]+  ;
+STRING: '"' (~["\r\n])* '"' | ~[ \t\r\n()!|&]+ ;
+
 EMPTY: ;
 
 WS: [ \t\r\n]+ -> skip;
