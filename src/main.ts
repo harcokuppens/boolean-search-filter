@@ -17,18 +17,33 @@ function getParserTree(booleanExpression: string): ExprContext {
     return tree;
 }
 
-
-
-function matchBooleanExpression(simpleBooleanExpr: ExprContext, line: string): boolean {
+function matchBooleanExpression(booleanExpr: ExprContext, line: string): boolean {
+    if (booleanExpr.exception) {
+        // we only get exception for whitespace string with our grammar,
+        // but this means just always match!
+        return true;
+    }
     const evalVisitor = new EvalVisitor(line);
-    const foundMatch = evalVisitor.visit(simpleBooleanExpr);
+    const foundMatch = evalVisitor.visit(booleanExpr);
     // if (foundMatch) {
-    //     const words = xeval.getStringValues();
+    //     const words = evalVisitor.getStringValues();
     //     console.log("words used in match: " + words.toString());
     // }
     return foundMatch;
 }
 
+function getWordsInBooleanExpr(booleanExpr: string): Array<string> {
+    const tree = getParserTree(booleanExpr);
+    if (tree.exception) {
+        // we only get exception for whitespace string with our grammar,
+        // but this means no words in expression!
+        return [];
+    }
+    const xeval = new WordsVisitor();
+    xeval.visit(tree);
+    const words = xeval.getStringValues();
+    return words;
+}
 
 
 var is_browser = typeof window !== 'undefined';
@@ -71,10 +86,13 @@ if (is_browser) {
         if (button) {
             button.addEventListener('click', function () {
                 if (searchbox) {
-                    const searchvalue = searchbox.value + "\n";
-                    // let value = simpleEval(searchvalue);
-                    // answer.textContent = value.toString();
-                    searchFilter(searchvalue);
+                    const searchvalue = searchbox.value;
+                    const match = searchFilter(searchvalue);
+                    if (match) {
+                        answer.textContent = "";
+                    } else {
+                        answer.textContent = "No matches";
+                    }
                 }
             });
         }
@@ -95,30 +113,28 @@ if (is_browser) {
     });
 
 
-    function processSibling(sibling: Element, booleanExpr: ExprContext, highlightValues: Array<string>): boolean {
+    function filterAndMarkElements(elements: NodeListOf<HTMLElement>, booleanExpr: ExprContext, highlightValues: Array<string>): boolean {
 
-        // get nested li elements in sibbling (eg. in ol list)
         let foundAtLeastOneMatch: boolean = false;
-        const liElements = sibling.querySelectorAll<HTMLLIElement>("li");
-        liElements.forEach((li, index) => {
+        elements.forEach((itemElement, index) => {
 
             // check boolean expression matches
             let foundMatch = false;
-            if (li.textContent) foundMatch = matchBooleanExpression(booleanExpr, li.textContent);
+            if (itemElement.textContent) foundMatch = matchBooleanExpression(booleanExpr, itemElement.textContent);
 
             // hide none matched items
             if (foundMatch) {
                 foundAtLeastOneMatch = true;
-                li.style.display = ""; // Show the <li> element
+                itemElement.style.display = ""; // Show the item element
             } else {
-                li.style.display = "none"; // Hide the <li> element
+                itemElement.style.display = "none"; // Hide the item element
             }
 
             // in a match highlight all words in boolean expression
             if (foundMatch && highlightValues) {
 
-                // Unwrap any <mark> elements inside the list item from previous search
-                li.querySelectorAll("mark").forEach((mark) => {
+                // Unwrap any <mark> elements inside the item from previous search
+                itemElement.querySelectorAll("mark").forEach((mark) => {
                     const parent = mark.parentNode!;
                     while (mark.firstChild) {
                         parent.insertBefore(mark.firstChild, mark);
@@ -126,11 +142,11 @@ if (is_browser) {
                     parent.removeChild(mark);
                 });
 
-                // Highlight each search term in the list item
+                // Highlight each search term in the item
                 for (const value of highlightValues) {
                     //const regex = new RegExp(`(${value})(?=[^<]*<)`, "gi");
                     const regex = new RegExp(`(${value})`, "gi");
-                    li.innerHTML = li.innerHTML.replace(regex, "<mark>$1</mark>");
+                    itemElement.innerHTML = itemElement.innerHTML.replace(regex, "<mark>$1</mark>");
                 }
             }
 
@@ -138,32 +154,31 @@ if (is_browser) {
         return foundAtLeastOneMatch;
     }
 
-    function getHighlightValues(booleanExpr: string): Array<string> {
-        const tree = getParserTree(booleanExpr);
-        const xeval = new WordsVisitor();
-        xeval.visit(tree);
-        const highlightValues = xeval.getStringValues();
-        //console.log("words in expression: " + highlightValues.toString());
-        return highlightValues;
-    }
-
-
-    function searchFilter(booleanExpr: string) {
+    function searchFilter(booleanExpr: string): boolean {
 
         // parse boolean expression as string to parse tree
         const tree = getParserTree(booleanExpr);
         // get all strings from boolean expression to highlight them in a match
-        const highlightValues = getHighlightValues(booleanExpr);
+        const highlightValues = getWordsInBooleanExpr(booleanExpr);
+        //console.log("words in expression: " + highlightValues.toString());
+        const anyMatchFound = htmlPageSpecificFilterAndMark(tree, highlightValues);
+        return anyMatchFound;
+    }
 
+    function htmlPageSpecificFilterAndMark(booleanExpr: ExprContext, highlightValues: Array<string>): boolean {
+
+        let anyMatchFound = false;
         // Select all <h1> elements inside the element with ID 'wikitext'
         const h1Elements = document.querySelectorAll<HTMLHeadingElement>("#wikitext > h1");
         h1Elements.forEach((h1, index) => {
             let foundAtLeastOneMatch = false;
 
-            // Get all elements between this <h1> and the next <h1>
+            // process all sibling elements between this <h1> and the next <h1>
             let sibling = h1.nextElementSibling;
             while (sibling && sibling.tagName !== "H1") {
-                let foundMatch: boolean = processSibling(sibling, tree, highlightValues);
+                // get nested li elements in sibbling (eg. in ol list)
+                const elements = sibling.querySelectorAll<HTMLElement>("li");
+                let foundMatch: boolean = filterAndMarkElements(elements, booleanExpr, highlightValues);
                 if (foundMatch) {
                     foundAtLeastOneMatch = true;
                 }
@@ -173,10 +188,12 @@ if (is_browser) {
             // Show or hide the <h1> based on whether any list items were shown
             if (foundAtLeastOneMatch) {
                 h1.style.display = "";
+                anyMatchFound = true;
             } else {
                 h1.style.display = "none";
             }
         });
+        return anyMatchFound;
     }
 }
 
