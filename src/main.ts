@@ -6,14 +6,14 @@ import BooleanExprParser, { ExprContext } from './generated/BooleanExprParser.js
 import { EvalVisitor } from './EvalVisitor.js';
 import { WordsVisitor } from './WordsVisitor.js';
 
-// // method to log tokens, for debugging grammar
-// function logTokens(symbols: (string | null)[], tokenStream: CommonTokenStream) {
-//     tokenStream.fill();
-//     tokenStream.tokens.forEach((token) => {
-//         const tokenName = symbols[token.type] || token.type;
-//         console.log(`Type: ${token.type}, Name: ${tokenName}, Text: '${token.text}'`);
-//     });
-// }
+// method to log tokens, for debugging grammar
+function logTokens(symbols: (string | null)[], tokenStream: CommonTokenStream) {
+    tokenStream.fill();
+    tokenStream.tokens.forEach((token) => {
+        const tokenName = symbols[token.type] || token.type;
+        console.log(`Type: ${token.type}, Name: ${tokenName}, Text: '${token.text}'`);
+    });
+}
 
 
 
@@ -21,7 +21,7 @@ function getParserTree(booleanExpression: string): ExprContext {
     const chars = new CharStream(booleanExpression); // replace this with a FileStream as required
     const lexer = new BooleanExprLexer(chars);
     const tokens = new CommonTokenStream(lexer);
-    //logTokens(lexer.symbolicNames, tokens);
+    logTokens(lexer.symbolicNames, tokens);
     const parser = new BooleanExprParser(tokens);
     let tree = parser.expr();
 
@@ -30,7 +30,7 @@ function getParserTree(booleanExpression: string): ExprContext {
         //console.error('Parsing error occurred.');
         throw new SyntaxError
     }
-    //console.log(tree.toStringTree(null, parser));
+    console.log(tree.toStringTree(null, parser));
     return tree;
 }
 
@@ -180,7 +180,7 @@ if (is_browser) {
     }
 
 
-    function filterAndMarkElements(elements: NodeListOf<HTMLElement>, booleanExpr: ExprContext, highlightValues: Array<string>): boolean {
+    function filterAndMarkElementsOrig(elements: NodeListOf<HTMLElement>, booleanExpr: ExprContext, highlightValues: Array<string>): boolean {
 
         let foundAtLeastOneMatch: boolean = false;
         elements.forEach((itemElement, index) => {
@@ -212,18 +212,34 @@ if (is_browser) {
         return foundAtLeastOneMatch;
     }
 
+    // let filterAndMarkElements: (elements: NodeListOf<HTMLElement>) => boolean;
+    // // Ensure it's initialized to a default function to prevent undefined access.
+    // filterAndMarkElements = () => { throw new Error("setFilterAndMark must be called first"); };
+
+    // function setFilterAndMark(booleanExpr: ExprContext, highlightValues: Array<string>) {
+    //     filterAndMarkElements = (elements) =>
+    //         filterAndMarkElementsOrig(elements, booleanExpr, highlightValues);
+    // }
+
+
+
+
+
     function searchFilter(booleanExpr: string): boolean {
 
         // parse boolean expression as string to parse tree
         const tree = getParserTree(booleanExpr);
         // get all strings from boolean expression to highlight them in a match
         const highlightValues = getWordsInBooleanExpr(booleanExpr);
+
+        //  setFilterAndMark(tree, highlightValues);
         //console.log("words in expression: " + highlightValues.toString());
-        const anyMatchFound = htmlPageSpecificFilterAndMark(tree, highlightValues);
+        let filterAndMarkElements = (elements: NodeListOf<HTMLElement>) => filterAndMarkElementsOrig(elements, tree, highlightValues);
+        const anyMatchFound = htmlPageSpecificFilterAndMark(filterAndMarkElements);
         return anyMatchFound;
     }
 
-    function htmlPageSpecificFilterAndMark(booleanExpr: ExprContext, highlightValues: Array<string>): boolean {
+    function htmlPageSpecificFilterAndMark(filterAndMarkElements: (elements: NodeListOf<HTMLElement>) => boolean): boolean {
 
         let anyMatchFound = false;
         // Select all <h1> elements inside the element with ID 'wikitext'
@@ -236,7 +252,7 @@ if (is_browser) {
             while (sibling && sibling.tagName !== "H1") {
                 // get nested li elements in sibbling (eg. in ol list)
                 const elements = sibling.querySelectorAll<HTMLElement>("li");
-                let foundMatch: boolean = filterAndMarkElements(elements, booleanExpr, highlightValues);
+                let foundMatch: boolean = filterAndMarkElements(elements);
                 if (foundMatch) {
                     foundAtLeastOneMatch = true;
                 }
