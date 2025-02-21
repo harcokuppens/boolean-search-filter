@@ -8,74 +8,57 @@ import { WordsVisitor } from './WordsVisitor.js';
 
 
 function getParserTree(booleanExpression: string): ExprContext {
-    //const input = "your text to parse here"
     const chars = new CharStream(booleanExpression); // replace this with a FileStream as required
     const lexer = new BooleanExprLexer(chars);
     const tokens = new CommonTokenStream(lexer);
     const parser = new BooleanExprParser(tokens);
     const tree = parser.expr();
-    console.log(tree.toStringTree(null, parser));
+    //console.log(tree.toStringTree(null, parser));
     return tree;
 }
 
-function matchSimpleBooleanExpressionWithValues(simpleBooleanExpr: ExprContext, line: string): [boolean, string[]] {
-    const xeval = new EvalVisitor(line);
-    const foundMatch = xeval.visit(simpleBooleanExpr);
-    const values = xeval.getStringValues();
-    return [foundMatch, values];
-}
 
-function matchSimpleBooleanExpression(simpleBooleanExpr: ExprContext, line: string): boolean {
-    const xeval = new EvalVisitor(line);
-    const foundMatch = xeval.visit(simpleBooleanExpr);
-    //const values = xeval.getStringValues();
-    if (foundMatch) {
-        const words = xeval.getStringValues();
-        console.log("words used in match: " + words.toString());
-    }
+
+function matchBooleanExpression(simpleBooleanExpr: ExprContext, line: string): boolean {
+    const evalVisitor = new EvalVisitor(line);
+    const foundMatch = evalVisitor.visit(simpleBooleanExpr);
+    // if (foundMatch) {
+    //     const words = xeval.getStringValues();
+    //     console.log("words used in match: " + words.toString());
+    // }
     return foundMatch;
 }
 
-function simpleEval(booleanExpression: string, line: string): [boolean, string[]] {
-    //const input = "your text to parse here"
-    // const chars = new CharStream(booleanExpression); // replace this with a FileStream as required
-    // const lexer = new BooleanExprLexer(chars);
-    // const tokens = new CommonTokenStream(lexer);
-    // const parser = new BooleanExprParser(tokens);
-    // const tree = parser.expr();
-    // console.log(tree.toStringTree(null, parser));
 
-    const tree = getParserTree(booleanExpression);
-
-    // const xeval = new EvalVisitor(line);
-    // const value = xeval.visit(tree);
-    // return value;
-    return matchSimpleBooleanExpressionWithValues(tree, line);
-}
-
-
-
-//let simpleBooleanExpr = "kuppens  vaAn"
-let simpleBooleanExpr = "(kuppens AND vaAn) or aarts"
-//let simpleBooleanExpr = "kupens or vaAn"
-let [foundMatch, values] = simpleEval(simpleBooleanExpr, "paper by vaandrager adn harco kuppens ");
-//foundMatch = simpleEval(simpleBooleanExpr, "paper by vaandrager adn harco kuppens ");
-//values = getHighlightValues(simpleBooleanExpr);
-
-
-console.log("foundMatch: " + foundMatch.toString());
-console.log("words used in match: " + values.toString());
-
-const tree = getParserTree(simpleBooleanExpr);
-const xeval = new WordsVisitor();
-xeval.visit(tree);
-const words = xeval.getStringValues();
-console.log("words in expression: " + words.toString());
 
 var is_browser = typeof window !== 'undefined';
 
-//console.log(is_browser)
-//console.log("finished");
+//----------------------------------------------------------------------------------------
+//       node.js only code
+//----------------------------------------------------------------------------------------
+
+if (!is_browser) {
+    const simpleBooleanExpr = "(kuppens AND vaAn) or aarts";
+    const tree = getParserTree(simpleBooleanExpr);
+
+    const line = "paper by vaandrager adn harco kuppens ";
+    const evalVisitor = new EvalVisitor(line);
+    const foundMatch = evalVisitor.visit(tree);
+    const values = evalVisitor.getStringValues();
+
+    console.log("foundMatch: " + foundMatch.toString());
+    console.log("words used in match: " + values.toString());
+
+
+    const wordsVisitor = new WordsVisitor();
+    wordsVisitor.visit(tree);
+    const words = wordsVisitor.getStringValues();
+    console.log("words in expression: " + words.toString());
+}
+
+//----------------------------------------------------------------------------------------
+//       browser only code
+//----------------------------------------------------------------------------------------
 
 if (is_browser) {
     document.addEventListener('DOMContentLoaded', function () {
@@ -91,7 +74,7 @@ if (is_browser) {
                     const searchvalue = searchbox.value + "\n";
                     // let value = simpleEval(searchvalue);
                     // answer.textContent = value.toString();
-                    logfilter(searchvalue);
+                    searchFilter(searchvalue);
                 }
             });
         }
@@ -112,26 +95,30 @@ if (is_browser) {
     });
 
 
-    function processSibling(sibling: Element, simpleBooleanExpr: ExprContext, highlightValues: Array<string>): boolean {
-
-        // console.log("  Examining sibling:", sibling);
+    function processSibling(sibling: Element, booleanExpr: ExprContext, highlightValues: Array<string>): boolean {
 
         // get nested li elements in sibbling (eg. in ol list)
         let foundAtLeastOneMatch: boolean = false;
         const liElements = sibling.querySelectorAll<HTMLLIElement>("li");
         liElements.forEach((li, index) => {
 
-            //  console.log("    Found <li>: ", li.textContent?.trim());
+            // check boolean expression matches
             let foundMatch = false;
-            if (li.textContent) foundMatch = matchSimpleBooleanExpression(simpleBooleanExpr, li.textContent);
+            if (li.textContent) foundMatch = matchBooleanExpression(booleanExpr, li.textContent);
 
-            if (foundMatch && highlightValues) {
-                // console.log("    Showing <li> and highlighting matches...");
+            // hide none matched items
+            if (foundMatch) {
                 foundAtLeastOneMatch = true;
+                li.style.display = ""; // Show the <li> element
+            } else {
+                li.style.display = "none"; // Hide the <li> element
+            }
 
-                // Unwrap any <mark> elements inside the list item
+            // in a match highlight all words in boolean expression
+            if (foundMatch && highlightValues) {
+
+                // Unwrap any <mark> elements inside the list item from previous search
                 li.querySelectorAll("mark").forEach((mark) => {
-                    // console.log("    Removing <mark> from <li>...");
                     const parent = mark.parentNode!;
                     while (mark.firstChild) {
                         parent.insertBefore(mark.firstChild, mark);
@@ -145,37 +132,32 @@ if (is_browser) {
                     const regex = new RegExp(`(${value})`, "gi");
                     li.innerHTML = li.innerHTML.replace(regex, "<mark>$1</mark>");
                 }
-                li.style.display = ""; // Show the <li> element
-            } else {
-                // console.log("    Hiding <li>...");
-                li.style.display = "none"; // Hide the <li> element
             }
 
         });
         return foundAtLeastOneMatch;
-
     }
 
-
-
-    function logfilter(simpleBooleanExpr: string) {
-        console.log("Starting filter function...");
-        console.log("Input simpleBooleanExpr:", simpleBooleanExpr);
-
-        const tree = getParserTree(simpleBooleanExpr);
-        // const highlightValues: Array<string> = getHighlightValues(simpleBooleanExpr);
-        // const tree = getParserTree(simpleBooleanExpr);
+    function getHighlightValues(booleanExpr: string): Array<string> {
+        const tree = getParserTree(booleanExpr);
         const xeval = new WordsVisitor();
         xeval.visit(tree);
         const highlightValues = xeval.getStringValues();
-        console.log("words in expression: " + highlightValues.toString());
+        //console.log("words in expression: " + highlightValues.toString());
+        return highlightValues;
+    }
+
+
+    function searchFilter(booleanExpr: string) {
+
+        // parse boolean expression as string to parse tree
+        const tree = getParserTree(booleanExpr);
+        // get all strings from boolean expression to highlight them in a match
+        const highlightValues = getHighlightValues(booleanExpr);
 
         // Select all <h1> elements inside the element with ID 'wikitext'
         const h1Elements = document.querySelectorAll<HTMLHeadingElement>("#wikitext > h1");
-        //console.log("Found <h1> elements:", h1Elements);
-
         h1Elements.forEach((h1, index) => {
-            // console.log(`Processing <h1> element #${index + 1}:`, h1.textContent?.trim());
             let foundAtLeastOneMatch = false;
 
             // Get all elements between this <h1> and the next <h1>
@@ -190,22 +172,11 @@ if (is_browser) {
 
             // Show or hide the <h1> based on whether any list items were shown
             if (foundAtLeastOneMatch) {
-                //  console.log(`  Showing <h1> since at least one <li> was shown: "${h1.textContent?.trim()}"`);
                 h1.style.display = "";
             } else {
-                //  console.log(`  Hiding <h1> since no matching <li> was found: "${h1.textContent?.trim()}"`);
                 h1.style.display = "none";
             }
         });
-
-        console.log("Filter function completed.");
     }
-
-
-
-    // Attach it to global scope (optional, if you want to access it in the debugger)
-    (window as any).logfilter = logfilter;
-
-
 }
 
