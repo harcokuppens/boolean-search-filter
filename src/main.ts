@@ -15,23 +15,6 @@ import { WordsVisitor } from './WordsVisitor.js';
 //     });
 // }
 
-// import { ErrorListener, Recognizer, RecognitionException } from 'antlr4';
-
-// class ThrowingErrorListener extends ErrorListener<any> {
-//     public static INSTANCE: ThrowingErrorListener = new ThrowingErrorListener();
-
-//     syntaxError(
-//         recognizer: Recognizer<any>,
-//         offendingSymbol: any,
-//         line: number,
-//         charPositionInLine: number,
-//         msg: string,
-//         e: RecognitionException | undefined
-//     ): void {
-//         throw new Error(`line ${line}:${charPositionInLine} ${msg}`);
-//     }
-// }
-
 
 
 function getParserTree(booleanExpression: string): ExprContext {
@@ -40,21 +23,13 @@ function getParserTree(booleanExpression: string): ExprContext {
     const tokens = new CommonTokenStream(lexer);
     //logTokens(lexer.symbolicNames, tokens);
     const parser = new BooleanExprParser(tokens);
-
-    // Remove default error listeners and add the custom one
-    // parser.removeErrorListeners();
-    // parser.addErrorListener(ThrowingErrorListener.INSTANCE);
-
     let tree = parser.expr();
 
     // Check for errors, and if so throw exception to be handled higher up
     if (parser.syntaxErrorsCount > 0) {
-        console.error('Parsing error occurred.');
+        //console.error('Parsing error occurred.');
         throw new SyntaxError
-    } else {
-        console.log('Parsed successfully:', tree);
     }
-
     //console.log(tree.toStringTree(null, parser));
     return tree;
 }
@@ -136,19 +111,11 @@ if (is_browser) {
                         answer.textContent = "";
                         error.textContent = "";
                         const match = searchFilter(searchvalue);
-                        // if (match) {
-                        //     answer.textContent = "";
-                        // } else {
-                        //     answer.textContent = "No matches";
-                        // }
                         if (!match) {
-                            //error.textContent = "No matches";
                             answer.textContent = "No matches";
-
                         }
                     } catch (exception) {
                         error.textContent = "Error in boolean search term";
-                        console.error('Parsing error:', exception.message);
                         // search with a never matching string to hide all listed entries so that focus comes on error
                         searchFilter('fsdjfkjaskfjksdjfksdjflksdjlka');
                     }
