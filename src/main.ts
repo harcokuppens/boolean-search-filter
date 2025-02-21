@@ -6,23 +6,66 @@ import BooleanExprParser, { ExprContext } from './generated/BooleanExprParser.js
 import { EvalVisitor } from './EvalVisitor.js';
 import { WordsVisitor } from './WordsVisitor.js';
 
+// // method to log tokens, for debugging grammar
+// function logTokens(symbols: (string | null)[], tokenStream: CommonTokenStream) {
+//     tokenStream.fill();
+//     tokenStream.tokens.forEach((token) => {
+//         const tokenName = symbols[token.type] || token.type;
+//         console.log(`Type: ${token.type}, Name: ${tokenName}, Text: '${token.text}'`);
+//     });
+// }
+
+// import { ErrorListener, Recognizer, RecognitionException } from 'antlr4';
+
+// class ThrowingErrorListener extends ErrorListener<any> {
+//     public static INSTANCE: ThrowingErrorListener = new ThrowingErrorListener();
+
+//     syntaxError(
+//         recognizer: Recognizer<any>,
+//         offendingSymbol: any,
+//         line: number,
+//         charPositionInLine: number,
+//         msg: string,
+//         e: RecognitionException | undefined
+//     ): void {
+//         throw new Error(`line ${line}:${charPositionInLine} ${msg}`);
+//     }
+// }
+
+
 
 function getParserTree(booleanExpression: string): ExprContext {
     const chars = new CharStream(booleanExpression); // replace this with a FileStream as required
     const lexer = new BooleanExprLexer(chars);
     const tokens = new CommonTokenStream(lexer);
+    //logTokens(lexer.symbolicNames, tokens);
     const parser = new BooleanExprParser(tokens);
-    const tree = parser.expr();
+
+    // Remove default error listeners and add the custom one
+    // parser.removeErrorListeners();
+    // parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+
+    let tree = parser.expr();
+
+    // Check for errors, and if so throw exception to be handled higher up
+    if (parser.syntaxErrorsCount > 0) {
+        console.error('Parsing error occurred.');
+        throw new SyntaxError
+    } else {
+        console.log('Parsed successfully:', tree);
+    }
+
     //console.log(tree.toStringTree(null, parser));
     return tree;
 }
 
+
 function matchBooleanExpression(booleanExpr: ExprContext, line: string): boolean {
-    if (booleanExpr.exception) {
-        // we only get exception for whitespace string with our grammar,
-        // but this means just always match!
-        return true;
-    }
+    // if (booleanExpr.exception) {
+    //     // we only get exception for whitespace string with our grammar,
+    //     // but this means just always match!
+    //     return true;
+    // }
     const evalVisitor = new EvalVisitor(line);
     const foundMatch = evalVisitor.visit(booleanExpr);
     // if (foundMatch) {
@@ -34,11 +77,11 @@ function matchBooleanExpression(booleanExpr: ExprContext, line: string): boolean
 
 function getWordsInBooleanExpr(booleanExpr: string): Array<string> {
     const tree = getParserTree(booleanExpr);
-    if (tree.exception) {
-        // we only get exception for whitespace string with our grammar,
-        // but this means no words in expression!
-        return [];
-    }
+    // if (tree.exception) {
+    //     // we only get exception for whitespace string with our grammar,
+    //     // but this means no words in expression!
+    //     return [];
+    // }
     const xeval = new WordsVisitor();
     xeval.visit(tree);
     const words = xeval.getStringValues();
@@ -81,18 +124,37 @@ if (is_browser) {
         const searchbox = document.getElementById('searchbox') as HTMLInputElement;
         const form = document.getElementById('searchForm') as HTMLFormElement;
         const answer = document.getElementById('answer') as HTMLElement;
+        const error = document.getElementById('error') as HTMLElement;
 
 
         if (button) {
             button.addEventListener('click', function () {
                 if (searchbox) {
                     const searchvalue = searchbox.value;
-                    const match = searchFilter(searchvalue);
-                    if (match) {
+
+                    try {
                         answer.textContent = "";
-                    } else {
-                        answer.textContent = "No matches";
+                        error.textContent = "";
+                        const match = searchFilter(searchvalue);
+                        // if (match) {
+                        //     answer.textContent = "";
+                        // } else {
+                        //     answer.textContent = "No matches";
+                        // }
+                        if (!match) {
+                            //error.textContent = "No matches";
+                            answer.textContent = "No matches";
+
+                        }
+                    } catch (exception) {
+                        error.textContent = "Error in boolean search term";
+                        console.error('Parsing error:', exception.message);
+                        // search with a never matching string to hide all listed entries so that focus comes on error
+                        searchFilter('fsdjfkjaskfjksdjfksdjflksdjlka');
                     }
+                    //  error.focus();
+
+
                 }
             });
         }
@@ -100,8 +162,10 @@ if (is_browser) {
         if (searchbox && button) {
             searchbox.addEventListener('keyup', function (event) {
                 if (event.key === 'Enter') {
-                    // event.preventDefault();
+                    event.preventDefault();
                     button.click();
+                    searchbox.blur(); // makes popup selectbox dissapear
+                    searchbox.focus(); // sets focus back so that you can continue typing if wanted
                 }
             });
         }
@@ -144,6 +208,8 @@ if (is_browser) {
 
                 // Highlight each search term in the item
                 for (const value of highlightValues) {
+                    // highlight value can also be empty string "" which we do not mark!
+                    if (value == "") continue;
                     //const regex = new RegExp(`(${value})(?=[^<]*<)`, "gi");
                     const regex = new RegExp(`(${value})`, "gi");
                     itemElement.innerHTML = itemElement.innerHTML.replace(regex, "<mark>$1</mark>");

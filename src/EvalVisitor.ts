@@ -1,6 +1,6 @@
 
 import BooleanExprVisitor from './generated/BooleanExprVisitor.js';
-import { AndExprContext, OrExprContext, ParenExprContext, StringExprContext, ImplicitAndExprContext, NotExprContext } from './generated/BooleanExprParser.js';
+import { AndExprContext, OrExprContext, ParenExprContext, StringExprContext, ImplicitAndExprContext, NotExprContext, EmptyExprContext } from './generated/BooleanExprParser.js';
 
 
 function matchWordInTextCaseInsensitive(word: string, text: string): boolean {
@@ -65,6 +65,11 @@ export class EvalVisitor extends BooleanExprVisitor<boolean> {
         const unquotedStr = str.startsWith('"') && str.endsWith('"') ? str.slice(1, -1) : str;
         this.stringValues.push(unquotedStr);
         return matchWordInTextCaseInsensitive(unquotedStr, this.textToMatch);
+    }
+
+    visitEmptyExpr = (ctx: EmptyExprContext): boolean => {
+        // Handle the empty string case
+        return true;
     }
 
     getStringValues(): string[] {
