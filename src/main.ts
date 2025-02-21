@@ -119,9 +119,6 @@ if (is_browser) {
                         // search with a never matching string to hide all listed entries so that focus comes on error
                         searchFilter('fsdjfkjaskfjksdjfksdjflksdjlka');
                     }
-                    //  error.focus();
-
-
                 }
             });
         }
@@ -143,6 +140,45 @@ if (is_browser) {
         }
     });
 
+    function markText(rootNode: HTMLElement, word: string) {
+        // word can also be empty string "" which we do not mark!
+        if (word == "") return;
+        const walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_TEXT, null);
+        let node;
+        while (node = walker.nextNode()) {
+            const parentNode = node.parentNode!;
+            const regex = new RegExp(`(${word})`, 'gi');
+            if (node.nodeValue && regex.test(node.nodeValue)) {
+                // create new html text from text in textnode 
+                const newHTML = node.nodeValue.replace(regex, '<mark>$1</mark>');
+                // place this text in a div element as innerHTML making the text being parsed as html!
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = newHTML;
+                // take the newly html nodes inside the div (tempDiv.firstChild) and place it in parentnode
+                //  as child before node (we are changing), then remove this old node from parent. (only remaining the newly html nodes in the parent node) 
+                while (tempDiv.firstChild) {
+                    parentNode.insertBefore(tempDiv.firstChild, node);
+                }
+                parentNode.removeChild(node);
+            }
+        }
+    }
+
+    function unMarkText(rootNode: HTMLElement) {
+        // Unwrap any <mark> elements inside the item from previous search
+        rootNode.querySelectorAll("mark").forEach((mark) => {
+            const parent = mark.parentNode!;
+            while (mark.firstChild) {
+                parent.insertBefore(mark.firstChild, mark);
+                // bla <mark>textinside</mark>  --> bla textinside<mark>textinside</mark>
+            }
+            parent.removeChild(mark);
+            // bla textinside<mark>textinside</mark> -> bla textinside
+            parent.normalize(); // after removing mark tags we get multiple adjacent text nodes, with normalized they get merged into one
+            // without normalizing a split text could not be matched by a next search anymore
+        });
+    }
+
 
     function filterAndMarkElements(elements: NodeListOf<HTMLElement>, booleanExpr: ExprContext, highlightValues: Array<string>): boolean {
 
@@ -163,23 +199,12 @@ if (is_browser) {
 
             // in a match highlight all words in boolean expression
             if (foundMatch && highlightValues) {
-
-                // Unwrap any <mark> elements inside the item from previous search
-                itemElement.querySelectorAll("mark").forEach((mark) => {
-                    const parent = mark.parentNode!;
-                    while (mark.firstChild) {
-                        parent.insertBefore(mark.firstChild, mark);
-                    }
-                    parent.removeChild(mark);
-                });
+                // remove mark tags within itemElement
+                unMarkText(itemElement);
 
                 // Highlight each search term in the item
                 for (const value of highlightValues) {
-                    // highlight value can also be empty string "" which we do not mark!
-                    if (value == "") continue;
-                    //const regex = new RegExp(`(${value})(?=[^<]*<)`, "gi");
-                    const regex = new RegExp(`(${value})`, "gi");
-                    itemElement.innerHTML = itemElement.innerHTML.replace(regex, "<mark>$1</mark>");
+                    markText(itemElement, value);
                 }
             }
 
