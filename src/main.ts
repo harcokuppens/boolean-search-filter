@@ -6,22 +6,22 @@ import BooleanExprParser, { ExprContext } from './generated/BooleanExprParser.js
 import { EvalVisitor } from './EvalVisitor.js';
 import { WordsVisitor } from './WordsVisitor.js';
 
-// method to log tokens, for debugging grammar
-function logTokens(symbols: (string | null)[], tokenStream: CommonTokenStream) {
-    tokenStream.fill();
-    tokenStream.tokens.forEach((token) => {
-        const tokenName = symbols[token.type] || token.type;
-        console.log(`Type: ${token.type}, Name: ${tokenName}, Text: '${token.text}'`);
-    });
-}
+// // method to log tokens, for debugging grammar
+// function logTokens(symbols: (string | null)[], tokenStream: CommonTokenStream) {
+//     tokenStream.fill();
+//     tokenStream.tokens.forEach((token) => {
+//         const tokenName = symbols[token.type] || token.type;
+//         console.log(`Type: ${token.type}, Name: ${tokenName}, Text: '${token.text}'`);
+//     });
+// }
 
 
-
+// boolexpr=booleanexpression.compile(booleanExpression: string)
 function getParserTree(booleanExpression: string): ExprContext {
     const chars = new CharStream(booleanExpression); // replace this with a FileStream as required
     const lexer = new BooleanExprLexer(chars);
     const tokens = new CommonTokenStream(lexer);
-    logTokens(lexer.symbolicNames, tokens);
+    //logTokens(lexer.symbolicNames, tokens);
     const parser = new BooleanExprParser(tokens);
     let tree = parser.expr();
 
@@ -30,17 +30,12 @@ function getParserTree(booleanExpression: string): ExprContext {
         //console.error('Parsing error occurred.');
         throw new SyntaxError
     }
-    console.log(tree.toStringTree(null, parser));
+    //console.log(tree.toStringTree(null, parser));
     return tree;
 }
 
-
-function matchBooleanExpression(booleanExpr: ExprContext, line: string): boolean {
-    // if (booleanExpr.exception) {
-    //     // we only get exception for whitespace string with our grammar,
-    //     // but this means just always match!
-    //     return true;
-    // }
+// boolexpr.match
+function matchBooleanExpr(booleanExpr: ExprContext, line: string): boolean {
     const evalVisitor = new EvalVisitor(line);
     const foundMatch = evalVisitor.visit(booleanExpr);
     // if (foundMatch) {
@@ -50,16 +45,11 @@ function matchBooleanExpression(booleanExpr: ExprContext, line: string): boolean
     return foundMatch;
 }
 
-function getWordsInBooleanExpr(booleanExpr: string): Array<string> {
-    const tree = getParserTree(booleanExpr);
-    // if (tree.exception) {
-    //     // we only get exception for whitespace string with our grammar,
-    //     // but this means no words in expression!
-    //     return [];
-    // }
-    const xeval = new WordsVisitor();
-    xeval.visit(tree);
-    const words = xeval.getStringValues();
+// boolexpr.getWords
+function getWordsInBooleanExpr(booleanExpr: ExprContext): Array<string> {
+    const wordsVisitor = new WordsVisitor();
+    wordsVisitor.visit(booleanExpr);
+    const words = wordsVisitor.getStringValues();
     return words;
 }
 
@@ -72,20 +62,25 @@ var is_browser = typeof window !== 'undefined';
 
 if (!is_browser) {
     const simpleBooleanExpr = "(kuppens AND vaAn) or aarts";
+    const line = "paper by vaandrager adn harco kuppens ";
+
     const tree = getParserTree(simpleBooleanExpr);
 
-    const line = "paper by vaandrager adn harco kuppens ";
-    const evalVisitor = new EvalVisitor(line);
-    const foundMatch = evalVisitor.visit(tree);
-    const values = evalVisitor.getStringValues();
+    const foundMatch = matchBooleanExpr(tree, line)
+
+    // const evalVisitor = new EvalVisitor(line);
+    // const foundMatch = evalVisitor.visit(tree);
+    // const values = evalVisitor.getStringValues();
 
     console.log("foundMatch: " + foundMatch.toString());
-    console.log("words used in match: " + values.toString());
+    //console.log("words used in match: " + values.toString());
 
 
-    const wordsVisitor = new WordsVisitor();
-    wordsVisitor.visit(tree);
-    const words = wordsVisitor.getStringValues();
+    // const wordsVisitor = new WordsVisitor();
+    // wordsVisitor.visit(tree);
+    // const words = wordsVisitor.getStringValues();
+
+    const words = getWordsInBooleanExpr(tree);
     console.log("words in expression: " + words.toString());
 }
 
@@ -180,14 +175,14 @@ if (is_browser) {
     }
 
 
-    function filterAndMarkElementsOrig(elements: NodeListOf<HTMLElement>, booleanExpr: ExprContext, highlightValues: Array<string>): boolean {
+    function filterAndMarkElements(elements: NodeListOf<HTMLElement>, booleanExpr: ExprContext, highlightValues: Array<string>): boolean {
 
         let foundAtLeastOneMatch: boolean = false;
         elements.forEach((itemElement, index) => {
 
             // check boolean expression matches
             let foundMatch = false;
-            if (itemElement.textContent) foundMatch = matchBooleanExpression(booleanExpr, itemElement.textContent);
+            if (itemElement.textContent) foundMatch = matchBooleanExpr(booleanExpr, itemElement.textContent);
 
             // hide none matched items
             if (foundMatch) {
@@ -212,34 +207,64 @@ if (is_browser) {
         return foundAtLeastOneMatch;
     }
 
-    // let filterAndMarkElements: (elements: NodeListOf<HTMLElement>) => boolean;
-    // // Ensure it's initialized to a default function to prevent undefined access.
-    // filterAndMarkElements = () => { throw new Error("setFilterAndMark must be called first"); };
 
-    // function setFilterAndMark(booleanExpr: ExprContext, highlightValues: Array<string>) {
-    //     filterAndMarkElements = (elements) =>
-    //         filterAndMarkElementsOrig(elements, booleanExpr, highlightValues);
-    // }
+    let elementsCssSelector = "li";
+
+    type filterAndMarkElementsFunc = (nodes: NodeListOf<HTMLElement>) => boolean;
+    // type customPageCallback = (fn: (nodes: NodeListOf<HTMLElement>) => boolean) => boolean;
+    // type customPageCallback = (fn: filterAndMarkElementsFunc) => boolean;
+
+    //let htmlPageSpecificFilterAndMarkCallback: (fn: (nodes: NodeListOf<HTMLElement>) => boolean) => boolean;
+    let htmlPageSpecificFilterAndMarkCallback: (fn: filterAndMarkElementsFunc) => boolean;
+
+    // Ensure it's initialized to a default function to prevent undefined access.
+    //htmlPageSpecificFilterAndMarkCallback = () => { throw new Error("setFilterAndMark must be called first"); };
 
 
+    htmlPageSpecificFilterAndMarkCallback = filterAndMarkElements => {
+        const elements = document.querySelectorAll<HTMLElement>("li");
+        let foundMatch: boolean = filterAndMarkElements(elements);
+        return foundMatch;
+    };
 
+
+    //function setHtmlPageSpecificFilterAndMarkCallback(callback: (fn: filterAndMarkElementsFunc) => boolean) {
+
+    function setElementsCssSelector(elementsCssSelector: string) {
+        elementsCssSelector = elementsCssSelector;
+    }
+
+    function setHtmlPageSpecificFilterAndMarkCallback(callback: (fn: (nodes: NodeListOf<HTMLElement>) => boolean) => boolean) {
+        htmlPageSpecificFilterAndMarkCallback = callback;
+    }
 
 
     function searchFilter(booleanExpr: string): boolean {
 
         // parse boolean expression as string to parse tree
         const tree = getParserTree(booleanExpr);
-        // get all strings from boolean expression to highlight them in a match
-        const highlightValues = getWordsInBooleanExpr(booleanExpr);
 
-        //  setFilterAndMark(tree, highlightValues);
+        // get all strings from boolean expression to highlight them in a match
+        const highlightValues = getWordsInBooleanExpr(tree);
         //console.log("words in expression: " + highlightValues.toString());
-        let filterAndMarkElements = (elements: NodeListOf<HTMLElement>) => filterAndMarkElementsOrig(elements, tree, highlightValues);
-        const anyMatchFound = htmlPageSpecificFilterAndMark(filterAndMarkElements);
+
+        let filterAndMarkElementsFn = (elements: NodeListOf<HTMLElement>) => filterAndMarkElements(elements, tree, highlightValues);
+        // const anyMatchFound = htmlPageSpecificFilterAndMark(filterAndMarkElements);
+        const anyMatchFound = htmlPageSpecificFilterAndMarkCallback(filterAndMarkElementsFn);
         return anyMatchFound;
     }
 
-    function htmlPageSpecificFilterAndMark(filterAndMarkElements: (elements: NodeListOf<HTMLElement>) => boolean): boolean {
+
+
+    //  apply page specific filtering and marking
+    //----------------------------------------------------------------------------------------
+
+
+    setHtmlPageSpecificFilterAndMarkCallback(htmlPageSpecificFilterAndMark);
+
+    function htmlPageSpecificFilterAndMark(filterAndMarkElements: filterAndMarkElementsFunc): boolean {
+
+        //function htmlPageSpecificFilterAndMark(filterAndMarkElements: (elements: NodeListOf<HTMLElement>) => boolean): boolean {
 
         let anyMatchFound = false;
         // Select all <h1> elements inside the element with ID 'wikitext'
