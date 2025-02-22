@@ -1,4 +1,16 @@
-import { getParserTree, matchBooleanExpr, getWordsInBooleanExpr, ExprContext } from './booleanexpression.js';
+//import { getParserTree, matchBooleanExpr, getWordsInBooleanExpr, ExprContext } from './booleanexpression.js';
+
+// function function getParserTree(booleanExpression: string): ExprContext
+// function matchBooleanExpr(booleanExpr: ExprContext, line: string): boolean
+// function getWordsInBooleanExpr(booleanExpr: ExprContext): Array<string>
+// class ExprContext
+
+
+import BooleanExpression from './booleanexpression.js';
+
+// const boolexpr = BooleanExpression.compile("A && B || C");
+// console.log(boolexpr.getWords()); // Geeft een lijst met woorden in de expressie
+// console.log(boolexpr.match("A B")); // Controleert of de tekst voldoet aan de expressie
 
 let elementsCssSelector = "li";
 
@@ -37,12 +49,14 @@ var is_browser = typeof window !== 'undefined';
 //----------------------------------------------------------------------------------------
 
 if (!is_browser) {
-    const simpleBooleanExpr = "(kuppens AND vaAn) or aarts";
+    const booleanExpr = "(kuppens AND vaAn) or aarts";
     const line = "paper by vaandrager adn harco kuppens ";
 
-    const tree = getParserTree(simpleBooleanExpr);
+    //const tree = getParserTree(simpleBooleanExpr);
+    const boolexpr = new BooleanExpression(booleanExpr);
 
-    const foundMatch = matchBooleanExpr(tree, line)
+    //const foundMatch = matchBooleanExpr(tree, line)
+    const foundMatch = boolexpr.match(line)
 
     // const evalVisitor = new EvalVisitor(line);
     // const foundMatch = evalVisitor.visit(tree);
@@ -56,7 +70,8 @@ if (!is_browser) {
     // wordsVisitor.visit(tree);
     // const words = wordsVisitor.getStringValues();
 
-    const words = getWordsInBooleanExpr(tree);
+    //const words = getWordsInBooleanExpr(tree);
+    const words = boolexpr.getWords();
     console.log("words in expression: " + words.toString());
 }
 
@@ -151,14 +166,16 @@ if (is_browser) {
     }
 
 
-    function filterAndMarkElements(elements: NodeListOf<HTMLElement>, booleanExpr: ExprContext, highlightValues: Array<string>): boolean {
+    function filterAndMarkElements(elements: NodeListOf<HTMLElement>, booleanExpr: BooleanExpression): boolean {
+
+        let highlightValues: Array<string> = booleanExpr.getWords();
 
         let foundAtLeastOneMatch: boolean = false;
         elements.forEach((itemElement, index) => {
 
             // check boolean expression matches
             let foundMatch = false;
-            if (itemElement.textContent) foundMatch = matchBooleanExpr(booleanExpr, itemElement.textContent);
+            if (itemElement.textContent) foundMatch = booleanExpr.match(itemElement.textContent);
 
             // hide none matched items
             if (foundMatch) {
@@ -190,13 +207,13 @@ if (is_browser) {
     function searchFilter(booleanExpr: string): boolean {
 
         // parse boolean expression as string to parse tree
-        const tree = getParserTree(booleanExpr);
+        const boolExpr = new BooleanExpression(booleanExpr);
 
         // get all strings from boolean expression to highlight them in a match
-        const highlightValues = getWordsInBooleanExpr(tree);
+        //   const highlightValues = boolExpr.getWordsInBooleanExpr(tree);
         //console.log("words in expression: " + highlightValues.toString());
 
-        let filterAndMarkElementsFn = (elements: NodeListOf<HTMLElement>) => filterAndMarkElements(elements, tree, highlightValues);
+        let filterAndMarkElementsFn = (elements: NodeListOf<HTMLElement>) => filterAndMarkElements(elements, boolExpr);
         // const anyMatchFound = htmlPageSpecificFilterAndMark(filterAndMarkElements);
         const anyMatchFound = htmlPageSpecificFilterAndMarkCallback(filterAndMarkElementsFn);
         return anyMatchFound;

@@ -1,5 +1,13 @@
 import { setElementsCssSelector, setHtmlPageSpecificFilterAndMarkCallback, filterAndMarkElementsFunc } from './booleansearch.js';
 
+// kiss:  BooleanSearch  class
+
+// create 'register' method to do event registration in html document with addEventListener
+// add function to generate html form within a div
+// add function to add custom html form within a div
+
+// add function to turn on/off case sensitivity
+
 
 //  apply page specific filtering and marking
 //----------------------------------------------------------------------------------------
