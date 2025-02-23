@@ -33,13 +33,14 @@ export default class BooleanExpression {
         });
     }
 
-
+    // get words used in boolean search expression
     getWords(): string[] {
         const wordsVisitor = new WordsVisitor();
         wordsVisitor.visit(this.tree);
         return wordsVisitor.getStringValues();
     }
 
+    // check whether given text matches the boolean expression
     match(text: string): boolean {
         const evalVisitor = new EvalVisitor(text);
 
@@ -52,6 +53,7 @@ export default class BooleanExpression {
         return foundMatch;
     }
 
+    // get words visited in evaluation of boolean search expression to come to positive match
     getWordsUsedInLastMatch() {
         return this.wordsUsedInMatch;
     }

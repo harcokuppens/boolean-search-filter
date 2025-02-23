@@ -1,6 +1,6 @@
 import BooleanExpression from './booleanexpression.js';
-
-let elementsCssSelector = "li";
+import { markText, unMarkText } from './markHtmlElements.js';
+let elementsCssSelectorForItems = "li";
 
 export type filterAndMarkElementsFunc = (nodes: NodeListOf<HTMLElement>) => boolean;
 // type customPageCallback = (fn: (nodes: NodeListOf<HTMLElement>) => boolean) => boolean;
@@ -12,18 +12,20 @@ let htmlPageSpecificFilterAndMarkCallback: (fn: filterAndMarkElementsFunc) => bo
 // Ensure it's initialized to a default function to prevent undefined access.
 //htmlPageSpecificFilterAndMarkCallback = () => { throw new Error("setFilterAndMark must be called first"); };
 
-
-htmlPageSpecificFilterAndMarkCallback = filterAndMarkElements => {
-    const elements = document.querySelectorAll<HTMLElement>("li");
+function defaultPageFilterAndMarkCallback(filterAndMarkElements: filterAndMarkElementsFunc) {
+    console.log("elementsCssSelector:" + elementsCssSelectorForItems);
+    const elements = document.querySelectorAll<HTMLElement>(elementsCssSelectorForItems);
     let foundMatch: boolean = filterAndMarkElements(elements);
     return foundMatch;
 };
+
+htmlPageSpecificFilterAndMarkCallback = defaultPageFilterAndMarkCallback;
 
 
 //function setHtmlPageSpecificFilterAndMarkCallback(callback: (fn: filterAndMarkElementsFunc) => boolean) {
 
 export function setElementsCssSelector(elementsCssSelector: string) {
-    elementsCssSelector = elementsCssSelector;
+    elementsCssSelectorForItems = elementsCssSelector;
 }
 
 export function setHtmlPageSpecificFilterAndMarkCallback(callback: (fn: (nodes: NodeListOf<HTMLElement>) => boolean) => boolean) {
@@ -78,44 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-function markText(rootNode: HTMLElement, word: string) {
-    // word can also be empty string "" which we do not mark!
-    if (word == "") return;
-    const walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_TEXT, null);
-    let node;
-    while (node = walker.nextNode()) {
-        const parentNode = node.parentNode!;
-        const regex = new RegExp(`(${word})`, 'gi');
-        if (node.nodeValue && regex.test(node.nodeValue)) {
-            // create new html text from text in textnode 
-            const newHTML = node.nodeValue.replace(regex, '<mark>$1</mark>');
-            // place this text in a div element as innerHTML making the text being parsed as html!
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = newHTML;
-            // take the newly html nodes inside the div (tempDiv.firstChild) and place it in parentnode
-            //  as child before node (we are changing), then remove this old node from parent. (only remaining the newly html nodes in the parent node) 
-            while (tempDiv.firstChild) {
-                parentNode.insertBefore(tempDiv.firstChild, node);
-            }
-            parentNode.removeChild(node);
-        }
-    }
-}
 
-function unMarkText(rootNode: HTMLElement) {
-    // Unwrap any <mark> elements inside the item from previous search
-    rootNode.querySelectorAll("mark").forEach((mark) => {
-        const parent = mark.parentNode!;
-        while (mark.firstChild) {
-            parent.insertBefore(mark.firstChild, mark);
-            // bla <mark>textinside</mark>  --> bla textinside<mark>textinside</mark>
-        }
-        parent.removeChild(mark);
-        // bla textinside<mark>textinside</mark> -> bla textinside
-        parent.normalize(); // after removing mark tags we get multiple adjacent text nodes, with normalized they get merged into one
-        // without normalizing a split text could not be matched by a next search anymore
-    });
-}
 
 
 function filterAndMarkElements(elements: NodeListOf<HTMLElement>, booleanExpr: BooleanExpression): boolean {

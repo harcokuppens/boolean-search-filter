@@ -13,7 +13,8 @@ import { setElementsCssSelector, setHtmlPageSpecificFilterAndMarkCallback, filte
 //----------------------------------------------------------------------------------------
 
 setElementsCssSelector("li");
-setHtmlPageSpecificFilterAndMarkCallback(htmlPageSpecificFilterAndMark);
+//setElementsCssSelector("h1");
+//setHtmlPageSpecificFilterAndMarkCallback(htmlPageSpecificFilterAndMark);
 
 function htmlPageSpecificFilterAndMark(filterAndMarkElements: filterAndMarkElementsFunc): boolean {
 
