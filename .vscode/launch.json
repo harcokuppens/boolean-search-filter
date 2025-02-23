@@ -7,9 +7,9 @@
     {
       "type": "node", // launch without browser to test code without browser
       "request": "launch",
-      "name": "Launch main.js in node",
+      "name": "Launch mainNodeJs.js in node",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/src/main.ts",
+      "program": "${workspaceFolder}/src/mainNodeJs.ts",
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": ["${workspaceFolder}/out/**/*.js"]
     },
