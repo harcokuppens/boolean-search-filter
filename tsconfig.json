@@ -20,6 +20,6 @@
     // "allowJs": true, // Allow importing JavaScript files (important for `antlr4` runtime).
   },
   "compileOnSave": true,
-  "include": ["src/**/*.ts", "test/**/*.ts"]
+  "include": ["src/**/*.ts", "test/**/*.ts", "src/highlightWords.ts "]
   // "exclude": ["node_modules", ".vscode-test"]
 }

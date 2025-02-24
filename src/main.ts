@@ -1,22 +1,39 @@
-import { setElementsCssSelector, setHtmlPageSpecificFilterAndMarkCallback, filterAndMarkElementsFunc } from './booleansearch.js';
-
-// kiss:  BooleanSearch  class
-
-// create 'register' method to do event registration in html document with addEventListener
-// add function to generate html form within a div
-// add function to add custom html form within a div
-
-// add function to turn on/off case sensitivity
+import { BooleanSearch } from './BooleanSearch.js';
 
 
 //  apply page specific filtering and marking
 //----------------------------------------------------------------------------------------
 
-setElementsCssSelector("li");
-//setElementsCssSelector("h1");
-//setHtmlPageSpecificFilterAndMarkCallback(htmlPageSpecificFilterAndMark);
+// let booleansearch = new BooleanSearch();
+// booleansearch.setElementsCssSelector("li");
+// booleansearch.setSectionElementsCssSelector("#wikitext > h1");
+// booleansearch.apply();
 
-function htmlPageSpecificFilterAndMark(filterAndMarkElements: filterAndMarkElementsFunc): boolean {
+
+const customId = "Bla";
+const formString: string = `
+<b> customform </b>
+<form id="${customId}_searchForm">
+    <input id="${customId}_searchbox" type="text" aria-label="Search text" />
+    <button id="${customId}_button" type="button" aria-label="Do Search">
+    Search
+    </button>
+</form>
+<div id="${customId}_error" style="color: red; font-weight: bold"></div>
+<div id="${customId}_answer"></div>
+`;
+
+//new BooleanSearch().setSectionElementsCssSelector("#wikitext > h1").setElementsCssSelector("li").setHighlighting(false).apply();
+//new BooleanSearch().setSectionElementsCssSelector("#wikitext > h1").setElementsCssSelector("li").setId(customId).setForm(formString).apply();
+//new BooleanSearch().setSectionElementsCssSelector("#wikitext > h1").setElementsCssSelector("li").setForm(formString).setId(customId).apply();
+//new BooleanSearch().setSectionElementsCssSelector("#wikitext > h1").setElementsCssSelector("li").setId(customId).setAutoForm().apply();
+new BooleanSearch().setSectionElementsCssSelector("#wikitext > h1").setElementsCssSelector("li").setAutoForm().apply();
+
+//new BooleanSearch().setHtmlPageSpecificFilterAndMarkCallback(htmlPageSpecificFilterAndMark).setHighlighting(true).apply();
+
+
+
+function htmlPageSpecificFilterAndMark(filterAndMarkElements: BooleanSearch.filterAndMarkElementsFunc): boolean {
 
     //function htmlPageSpecificFilterAndMark(filterAndMarkElements: (elements: NodeListOf<HTMLElement>) => boolean): boolean {
 

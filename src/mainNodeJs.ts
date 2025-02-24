@@ -1,5 +1,5 @@
 
-import BooleanExpression from './booleanexpression.js';
+import BooleanExpression from './BooleanExpression.js';
 
 const booleanExpr = "(kuppens AND vaAn) or aarts";
 const line = "paper by vaandrager adn harco kuppens ";
