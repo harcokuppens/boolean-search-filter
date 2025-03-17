@@ -7,6 +7,62 @@
       "command": "lsof -i :4444 || npx serve -l 4444 . ",
       "isBackground": true,
       "problemMatcher": []
+    },
+    {
+      "label": "npx serve",
+      "type": "shell",
+      "command": "npx serve -l 4444 . ",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": ".",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Executing task:.* npx serve",
+          "endsPattern": "Serving!"
+        }
+      },
+      "presentation": {
+        "reveal": "silent"
+      }
+    },
+    {
+      //"label": "npm: dev",
+      "label": "vite dev server",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": ".",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Executing task: npm run dev",
+          // "endsPattern": "VITE.*ready"
+          "endsPattern": "[Vv][Ii][Tt][Ee].*[rR][eE][aA][dD[yY]"
+          // ends Pattern for a background task should match when bg task is up. Not when it is ended.
+          // This is needed to run other tasks which depend on this task running!!
+          // About pattern:
+          // Type: The beginsPattern is a regex pattern used to match specific lines of output from the task.
+          // Matching: It matches any part of the output line that fits the pattern. It doesn't need to match the entire line.
+          // Case Sensitivity: By default, regex patterns are case-sensitive. If you need a case-insensitive match, you can use the i flag.
+          //                    "beginsPattern": "(?i)http://localhost:\\d+"   => (?i) makes it case insensitive!  ==> DOES NOT WORK!!
+          //                    "beginsPattern":"/vite.*ready/i"              => ALSO DOES NOT WORK
+          //   => no case insensivity possible
+          // hack: replace each letter x with [xX]
+        }
+      },
+      "presentation": {
+        "reveal": "silent"
+      }
     }
   ]
 }

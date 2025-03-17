@@ -1,5 +1,5 @@
 import BooleanExpression from './BooleanExpression.js';
-import { markText, unMarkText } from './highlightWords.js';
+import { markText, unMarkText } from '@harcokuppens/highlight-words';
 
 export namespace BooleanSearch {
     export type filterAndMarkElementsFunc = (nodes: NodeListOf<HTMLElement>) => boolean;

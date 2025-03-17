@@ -3,3 +3,6 @@
 *.sw*
 out/
 node_modules/
+.vscode/edge-dev/
+build/
+types/

@@ -132,7 +132,27 @@ put breakpoints there
    webpack # make webbundle in dist folder
    ```
 
-4. use newly build webbundle:
+4. to also include the javascript sources in the webpack change in `package.json` the
+   lines
+
+   ```
+   "files": [
+      "dist",
+      "src/**/*.d.cts",
+      "src/**/*.d.ts"
+   ],
+   ```
+
+   into
+
+   ```
+   "files": [
+      "dist",
+      "src/"
+   ],
+   ```
+
+5. use newly build webbundle:
 
    ```
    npm install -g # to install current build globally
