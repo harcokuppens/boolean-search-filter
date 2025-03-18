@@ -1,4 +1,4 @@
-import BooleanExpression from './BooleanExpression.js';
+import BooleanExpression from '@harcokuppens/boolean-expression';
 import { markText, unMarkText } from '@harcokuppens/highlight-words';
 
 export namespace BooleanSearch {

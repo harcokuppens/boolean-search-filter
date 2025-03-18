@@ -2,35 +2,6 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Start Webserver",
-      "type": "shell",
-      "command": "lsof -i :4444 || npx serve -l 4444 . ",
-      "isBackground": true,
-      "problemMatcher": []
-    },
-    {
-      "label": "npx serve",
-      "type": "shell",
-      "command": "npx serve -l 4444 . ",
-      "isBackground": true,
-      "problemMatcher": {
-        "pattern": {
-          "regexp": ".",
-          "file": 1,
-          "location": 2,
-          "message": 3
-        },
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": "Executing task:.* npx serve",
-          "endsPattern": "Serving!"
-        }
-      },
-      "presentation": {
-        "reveal": "silent"
-      }
-    },
-    {
       //"label": "npm: dev",
       "label": "vite dev server",
       "type": "npm",

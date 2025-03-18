@@ -5,44 +5,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "node", // launch without browser to test code without browser
-      "request": "launch",
-      "name": "Launch mainNodeJs.js in node",
-      "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/src/mainNodeJs.ts",
-      "preLaunchTask": "tsc: build - tsconfig.json",
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
-    },
-    // {  // does not work with ES6 or later because  Cross origin  policy of importing a module requires http server
-    //   "type": "msedge",
-    //   "request": "launch",
-    //   "name": "Launch bibber.html",
-    //   "file": "${workspaceFolder}/bibber.html"
-    // },
-    {
-      "type": "msedge",
-      "request": "launch",
-      "name": "Launch bibber.html (with Same-Origin Policy disabled)",
-      "file": "${workspaceFolder}/bibber.html",
-      "runtimeArgs": [
-        "--disable-web-security",
-        "--user-data-dir=${workspaceFolder}/.vscode/edge-dev"
-      ]
-    },
-    {
-      "type": "msedge",
-      "name": "Launch bibber.html(and main.js ) in webserver (requires Webserver task running)",
-      "request": "launch",
-      "url": "http://localhost:4444/bibber.html",
-      "preLaunchTask": "tsc: build - tsconfig.json",
-      //"preLaunchTask": "npx serve",
-      // NOTE: can do not both above, so just start "npx server task" manually,
-      //      and run the tsc task every time because I want to be sure everything
-      //      is recompiled. And if the webserver is not running we will see it, and
-      //      can then easily launch this task!
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
-    },
-    {
       "type": "msedge",
       "request": "launch",
       "name": "Launch Vite",

@@ -7,7 +7,7 @@ export default defineConfig({
     build: {
         outDir: 'dist',
         rollupOptions: {
-            input: 'bibber.html',
+            input: 'index.html',
             output: {
                 entryFileNames: 'booleansearch.js', // Verandert de JS bestandsnaam
                 assetFileNames: '[name][extname]', // Houdt CSS en andere assets netjes
