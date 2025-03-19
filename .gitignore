@@ -1,5 +1,5 @@
 **/generated/
-/dist/
+/dist*/
 *.sw*
 out/
 node_modules/
