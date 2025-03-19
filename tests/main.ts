@@ -1,4 +1,4 @@
-import { BooleanSearch } from './BooleanSearch.js';
+import { BooleanSearch } from '../src/BooleanSearch.js';
 
 
 //  apply page specific filtering and marking

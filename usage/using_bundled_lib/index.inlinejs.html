@@ -1,4 +1,11 @@
-<script type="module" src="./tests/main.ts"></script>
+<script type="module">
+  import { BooleanSearch } from "./BooleanSearch.es.js";
+  new BooleanSearch()
+    .setSectionElementsCssSelector("#wikitext > h1")
+    .setElementsCssSelector("li")
+    .setAutoForm()
+    .apply();
+</script>
 
 <body>
   <div id="Bla"></div>
