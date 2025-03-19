@@ -21,7 +21,8 @@
     "files": [
         "dist",
         "types",
-        "src"
+        "src",
+        "tests"
     ],
     "scripts": {
         "predev": "npm install # makes sure the dependencies are installed before starting the dev server",
@@ -33,12 +34,12 @@
         "buildbundled": "tsc && vite -c vite.config.bundledlib.ts build",
         "prepublishOnly": "npm run build",
         "lint": "tslint -c tslint.json src/*.ts",
-        "clean": "rm -rf dist/ types/ ",
+        "clean": "rm -rf dist/ dist_bundledlib/ types/ ",
         "cleanall": "npm run clean ; rm -rf  node_modules/"
     },
     "dependencies": {
-        "@harcokuppens/boolean-expression": "file:../boolean-expression/harcokuppens-boolean-expression-1.0.0.tgz",
-        "@harcokuppens/highlight-words": "file:../highlight-words/harcokuppens-highlight-words-1.0.1.tgz"
+        "@harcokuppens/boolean-expression": "^1.0.0",
+        "@harcokuppens/highlight-words": "^1.0.1"
     },
     "devDependencies": {
         "@types/node": "^22.13.4",

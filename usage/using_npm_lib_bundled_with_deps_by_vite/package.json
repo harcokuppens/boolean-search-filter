@@ -35,9 +35,7 @@
         "cleanall": "npm run clean ; rm -rf  node_modules/"
     },
     "dependencies": {
-        "@harcokuppens/boolean-expression": "file:../../../boolean-expression/harcokuppens-boolean-expression-1.0.0.tgz",
-        "@harcokuppens/boolean-search": "file:../../harcokuppens-boolean-search-1.0.0.tgz",
-        "@harcokuppens/highlight-words": "file:../../../highlight-words/harcokuppens-highlight-words-1.0.1.tgz"
+        "@harcokuppens/boolean-search": "^1.0.0"
     },
     "devDependencies": {
         "@types/node": "^22.13.4",
