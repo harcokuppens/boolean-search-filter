@@ -1,4 +1,4 @@
-import { BooleanSearch } from './BooleanSearch.es.js';
+import { BooleanSearch } from './BooleanSearch.bundled.es.js';
 
 
 //  apply page specific filtering and marking
@@ -10,7 +10,7 @@ import { BooleanSearch } from './BooleanSearch.es.js';
 // booleansearch.apply();
 
 
-const customId = "Bla";
+const customId = "mybooleansearch";
 const formString: string = `
 <b> customform </b>
 <form id="${customId}_searchForm">
@@ -23,11 +23,19 @@ const formString: string = `
 <div id="${customId}_answer"></div>
 `;
 
+new BooleanSearch().setSectionElementsCssSelector("#mycontent > h1").setElementsCssSelector("li").setId(customId).setForm(formString).apply();
+
+// autoform
+//new BooleanSearch().setSectionElementsCssSelector("#mycontent > h1").setElementsCssSelector("li").setAutoForm().apply();
+
+
+
 //new BooleanSearch().setSectionElementsCssSelector("#wikitext > h1").setElementsCssSelector("li").setHighlighting(false).apply();
 //new BooleanSearch().setSectionElementsCssSelector("#wikitext > h1").setElementsCssSelector("li").setId(customId).setForm(formString).apply();
-//new BooleanSearch().setSectionElementsCssSelector("#wikitext > h1").setElementsCssSelector("li").setForm(formString).setId(customId).apply();
+
+
+
 //new BooleanSearch().setSectionElementsCssSelector("#wikitext > h1").setElementsCssSelector("li").setId(customId).setAutoForm().apply();
-new BooleanSearch().setSectionElementsCssSelector("#wikitext > h1").setElementsCssSelector("li").setAutoForm().apply();
 
 //new BooleanSearch().setHtmlPageSpecificFilterAndMarkCallback(htmlPageSpecificFilterAndMark).setHighlighting(true).apply();
 

@@ -16,7 +16,7 @@ export default defineConfig({
             //  do not set 'formats' , default value for it is ok.
             formats: ['es'],
             //fileName: (format) => `boolean-expression.${format}.js`
-            fileName: (format, entryName) => `${entryName}.${format}.js`
+            fileName: (format, entryName) => `${entryName}.bundled.${format}.js`
         }
     }
 });

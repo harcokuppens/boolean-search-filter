@@ -13,14 +13,19 @@ export class BooleanSearch {
 
     private id = "BooleanSearch";
 
+    /**
+     * Sets the auto-generated search form in the HTML element with the specified ID.
+     * @returns {this} The current instance of BooleanSearch.
+     */
     setAutoForm(): this {
         const formString: string = `
-        <b> autoform </b>
+        
         <form id="${this.id}_searchForm">
-            <input id="${this.id}_searchbox" type="text" aria-label="Search text" />
+            <input id="${this.id}_searchbox" type="text" aria-label="Search text" style="width: 500px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; " />
             <button id="${this.id}_button" type="button" aria-label="Do Search">
             Search
-            </button>
+            </button><br>
+            <small> <b> &nbsp;&nbsp;&nbsp; <a href="https://www.npmjs.com/package/boolean-search-filter"> boolean search supported</a>: </b> eg. (John OR "Jane Smith") AND NOT journal </small>
         </form>
         <div id="${this.id}_error" style="color: red; font-weight: bold"></div>
         <div id="${this.id}_answer"></div>
@@ -29,36 +34,69 @@ export class BooleanSearch {
         return this;
     }
 
+    /**
+     * Sets a custom search form in the HTML element with the specified ID.
+     * @param {string} formString - The HTML string for the custom search form.
+     * @returns {this} The current instance of BooleanSearch.
+     */
     setForm(formString: string): this {
         document.getElementById(this.id)!.innerHTML = formString;
         return this;
     }
 
+    /**
+     * Sets the ID of the HTML element where the search form will be inserted.
+     * @param {string} id - The ID of the HTML element.
+     * @returns {this} The current instance of BooleanSearch.
+     */
     setId(id: string): this {
         this.id = id;
         return this;
-    };
+    }
 
+    /**
+     * Sets the CSS selector for the elements to be searched.
+     * @param {string} elementsCssSelector - The CSS selector for the elements.
+     * @returns {this} The current instance of BooleanSearch.
+     */
     setElementsCssSelector(elementsCssSelector: string): this {
         this.elementsCssSelectorForItems = elementsCssSelector;
         return this;
     }
 
+    /**
+     * Sets the CSS selector for the section elements to be searched.
+     * @param {string} elementsCssSelector - The CSS selector for the section elements.
+     * @returns {this} The current instance of BooleanSearch.
+     */
     setSectionElementsCssSelector(elementsCssSelector: string): this {
         this.elementsCssSelectorForSectionItems = elementsCssSelector;
         return this;
     }
 
+    /**
+     * Sets a callback function for filtering and marking elements on the HTML page.
+     * @param {(fn: BooleanSearch.filterAndMarkElementsFunc) => boolean} callback - The callback function.
+     * @returns {this} The current instance of BooleanSearch.
+     */
     setHtmlPageSpecificFilterAndMarkCallback(callback: (fn: BooleanSearch.filterAndMarkElementsFunc) => boolean): this {
         this.htmlPageSpecificFilterAndMarkCallback = callback;
         return this;
     }
 
+    /**
+     * Enables or disables highlighting of matched elements.
+     * @param {boolean} active - Whether highlighting should be active.
+     * @returns {this} The current instance of BooleanSearch.
+     */
     setHighlighting(active: boolean): this {
         this.highlightingActive = active;
         return this;
     }
 
+    /**
+     * Applies the search functionality to the HTML page.
+     */
     apply(): void {
         if (this.htmlPageSpecificFilterAndMarkCallback === null) {
             if (this.elementsCssSelectorForSectionItems === null) {
@@ -76,7 +114,6 @@ export class BooleanSearch {
             const form = document.getElementById(`${booleansearch.id}_searchForm`) as HTMLFormElement;
             const answer = document.getElementById(`${booleansearch.id}_answer`) as HTMLElement;
             const error = document.getElementById(`${booleansearch.id}_error`) as HTMLElement;
-
 
             if (button) {
                 button.addEventListener('click', function () {
@@ -104,7 +141,7 @@ export class BooleanSearch {
                     if (event.key === 'Enter') {
                         event.preventDefault();
                         button.click();
-                        searchbox.blur(); // makes popup selectbox dissapear
+                        searchbox.blur(); // makes popup selectbox disappear
                         searchbox.focus(); // sets focus back so that you can continue typing if wanted
                     }
                 });
@@ -115,34 +152,37 @@ export class BooleanSearch {
                 });
             }
         });
-
-
     }
 
+    /**
+     * Filters and marks elements based on the provided boolean expression.
+     * @param {string} booleanExpr - The boolean expression to filter elements.
+     * @returns {boolean} Whether any elements matched the boolean expression.
+     */
     private searchFilter(booleanExpr: string): boolean {
-
-        // parse boolean expression as string to parse tree
         const boolExpr = new BooleanExpression(booleanExpr);
-
-        // get all strings from boolean expression to highlight them in a match
-        //   const highlightValues = boolExpr.getWordsInBooleanExpr(tree);
-        //console.log("words in expression: " + highlightValues.toString());
-
         let filterAndMarkElementsFn = (elements: NodeListOf<HTMLElement>) => this.filterAndMarkElementsMatchingBooleanExpression(elements, boolExpr);
-        // const anyMatchFound = htmlPageSpecificFilterAndMark(filterAndMarkElements);
         const anyMatchFound = this.htmlPageSpecificFilterAndMarkCallback!(filterAndMarkElementsFn);
         return anyMatchFound;
     }
 
-    private elementsPageFilterAndMarkCallback(filterAndMarkElements: BooleanSearch.filterAndMarkElementsFunc) {
-        //console.log("elementsCssSelector:" + this.elementsCssSelectorForItems);
+    /**
+     * Filters and marks elements on the page based on the provided callback function.
+     * @param {BooleanSearch.filterAndMarkElementsFunc} filterAndMarkElements - The callback function to filter and mark elements.
+     * @returns {boolean} Whether any elements matched the boolean expression.
+     */
+    private elementsPageFilterAndMarkCallback(filterAndMarkElements: BooleanSearch.filterAndMarkElementsFunc): boolean {
         const elements = document.querySelectorAll<HTMLElement>(this.elementsCssSelectorForItems);
         let foundMatch: boolean = filterAndMarkElements(elements);
         return foundMatch;
-    };
+    }
 
+    /**
+     * Filters and marks sectioned elements on the page based on the provided callback function.
+     * @param {BooleanSearch.filterAndMarkElementsFunc} filterAndMarkElements - The callback function to filter and mark elements.
+     * @returns {boolean} Whether any elements matched the boolean expression.
+     */
     private sectionedElementsPageFilterAndMarkCallback(filterAndMarkElements: BooleanSearch.filterAndMarkElementsFunc): boolean {
-
         let anyMatchFound = false;
         // Select all <sectionElement> elements inside the element with ID 'wikitext'
         // only if elementsCssSelectorForSectionItems is not null is this method used!
@@ -160,7 +200,7 @@ export class BooleanSearch {
                     foundAtLeastOneMatch = true;
                 }
                 sibling = sibling.nextElementSibling;
-            };
+            }
 
             // Show or hide the <sectionElement> based on whether any list items were shown
             if (foundAtLeastOneMatch) {
@@ -173,12 +213,17 @@ export class BooleanSearch {
         return anyMatchFound;
     }
 
+    /**
+     * Filters and marks elements that match the provided boolean expression.
+     * @param {NodeListOf<HTMLElement>} elements - The elements to filter and mark.
+     * @param {BooleanExpression} booleanExpr - The boolean expression to match elements against.
+     * @returns {boolean} Whether any elements matched the boolean expression.
+     */
     private filterAndMarkElementsMatchingBooleanExpression(elements: NodeListOf<HTMLElement>, booleanExpr: BooleanExpression): boolean {
-
         let highlightValues: Array<string> = booleanExpr.getWords();
-
         let foundAtLeastOneMatch: boolean = false;
         elements.forEach((itemElement, index) => {
+
 
             // check boolean expression matches
             let foundMatch = false;
@@ -189,7 +234,7 @@ export class BooleanSearch {
                 foundAtLeastOneMatch = true;
                 itemElement.style.display = ""; // Show the item element
             } else {
-                itemElement.style.display = "none"; // Hide the item element
+                itemElement.style.display = "none";  // Hide the item element
             }
 
             if (this.highlightingActive) {
@@ -197,16 +242,13 @@ export class BooleanSearch {
                 if (foundMatch && highlightValues) {
                     // remove mark tags within itemElement
                     unMarkText(itemElement);
-
                     // Highlight each search term in the item
                     for (const value of highlightValues) {
                         markText(itemElement, value);
                     }
                 }
             }
-
         });
         return foundAtLeastOneMatch;
     }
-
 }

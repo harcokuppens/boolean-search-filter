@@ -1,167 +1,397 @@
-# Boolean search
+# Boolean search filter
+
+Library to create a search form on a `HTML` page to search items using a boolean
+expression of words, making none-matched items hidden, and making the searched words
+highlighted in the matched items. Matching of the words in the boolean expression can
+with a checkbox be done either case sensitive or case insensitive.
+
+## Table of contents
+
+<!--ts-->
+<!-- prettier-ignore -->
+   * [Description](#description)
+   * [Boolean expression](#boolean-expression)
+   * [Usage](#usage)
+      * [Example webpage](#example-webpage)
+      * [BooleanSearch with an autoform](#booleansearch-with-an-autoform)
+      * [BooleanSearch with an self supplied form](#booleansearch-with-an-self-supplied-form)
+         * [Static form in HTML](#static-form-in-html)
+         * [Dynamically loaded form in javascript](#dynamically-loaded-form-in-javascript)
+   * [API of the BooleanSearch Class](#api-of-the-booleansearch-class)
+      * [Methods](#methods)
+         * [setAutoForm()](#setautoform)
+         * [setForm(formString: string)](#setformformstring-string)
+         * [setId(id: string)](#setidid-string)
+         * [setElementsCssSelector(elementsCssSelector: string)](#setelementscssselectorelementscssselector-string)
+         * [setSectionElementsCssSelector(elementsCssSelector: string)](#setsectionelementscssselectorelementscssselector-string)
+         * [setHtmlPageSpecificFilterAndMarkCallback(callback: (fn: BooleanSearch.filterAndMarkElementsFunc) =&gt; boolean)](#sethtmlpagespecificfilterandmarkcallbackcallback-fn-booleansearchfilterandmarkelementsfunc--boolean)
+         * [setHighlighting(active: boolean)](#sethighlightingactive-boolean)
+         * [apply()](#apply)
+<!--te-->
+
+## Description
 
 On websites listing many items one sometimes wants to filter the items listed. This
-project provides a boolean expression evaluator in typescript with which you can
-create a boolean expression with some search words.
+project adds a searchbox to your webpage in which you can type a boolean expression
+with some search words to filter the items listed.
+
+The boolean search filter searchbox uses the
+[boolean expression library](https://github.com/harcokuppens/boolean-expression) in
+typescript to evaluate a boolean expression with words on a give text. The matched
+items after filtering will then be shown with the search words highlighted.
+Highlighting is done with the
+[hightlight words library](https://github.com/harcokuppens/highlight-words).
+
+## Boolean expression
+
+A boolean expressions is an expression where you combine search words with
+parentheses and the NOT, AND and OR operators. For example we could write:
 
 Example:
 
 ```
-   ("machine learning" OR "artificial intelligence") AND NOT "image recognition"
+   (John OR "Jane Smith") AND NOT journal
 ```
 
-In typescript code we parse a boolean expression of strings, to filter which set of
-items out of a list of items should be displayed in an html page.
+When evaluating this expression against a given string, then each word in the
+expression is match against the given string and in case of match replaced by `TRUE`
+and else by `FALSE` in the string. The rewritten boolean expression can then easily
+be evaluated to either `TRUE` or `FALSE`.
 
-The boolean expression is applied to each item, and when `true` the item is selected
-to be shown in html, and when `false` the item is hidden in html, causing only `true`
+The boolean expression is applied to each item, and when `TRUE` the item is selected
+to be shown in html, and when `FALSE` the item is hidden in html, causing only `TRUE`
 items to be shown.
 
-The boolean expression contains strings, where each string is only evaluated true
-when this string is contained (case insensitive) in the item. Only when the complete
-boolean expression is `true` on the item, only then it will be shown.
+The [boolean expression library](https://github.com/harcokuppens/boolean-expression)
+allows the boolean operators 'AND', 'OR' and 'NOT' to be used case insensitive and
+also provides us with alternative words for the operators:
 
-## Sources
-
-- grammar/LabeledExpr.g4 - ANTLR4 grammar for boolean expression
-- src/main.ts - main script which runs given boolean expression agains a list of text
-  items, only the items which are evaluated true are shown in html; false items are
-  hidden in html.
-- src/EvalVisitor.ts - evaluates boolean expression where each STRING in the boolean
-  expression is matched against given text giving true if matched and false if not
-  matched. The STRINGs evaluated to a boolean value are combined in the boolean
-  expression to give an overall boolean value.
-- src/WordsVisitor.ts - gets all words used in the boolean expression to make them
-  highlighted in the match shown in html
-
-## How to use
-
-First build with a bash script:
-
-```bash
-./build.bash
+```
+    operator  |    allowed syntax
+  -----------------------------------
+     AND      |  'AND', '&&', or '&'
+     OR       |  'OR', '||', or '|'
+     NOT      |  'NOT', or '!'
 ```
 
-The build script does
+Meaning we can write the boolean expression in above example also as:
 
-```bash
-npm install # install dependencies of project defined in package.json
-            # to install antlr4 without minimized source:
-            #     npm uninstall antlr4
-            #     npm install antlr4-4.13.2.tgz # see below how to build it
-            # rebuild of antlr with webpack mode set to "development" instead of "production"
-
-./generate.bash # generate type script from grammar in src/generated
-tsc  # compile typescript code to javascript
+```
+   (John | "Jane Smith") & !journal
 ```
 
-Then run `out/main.js` with `node.js` execution environment (none-browser) :
+Note that none-quoted words in the booleanexpression may not contain the characters
+'|','&' and '!'. But if you quote the word then these characters are allowed. This
+means that in above example '!journal' is read as 'NOT journal'.
 
-```bash
-node out/main.js # run generated javascript main.js.  You could also run 'npm run start'
+As a convenience, when we omit an operator between words, then implicitly the 'AND'
+operator is assumed.
+
+Finally when we have an invalid boolean expression, eg. 'John AND', then an error
+message 'Error in boolean search term' is displayed.
+
+## Usage
+
+We first show an example `HTML` page and then show how to enable `Boolean search` on
+it using with either an automatically applied form by the library or by a
+self-supplied form.
+
+### Example webpage
+
+We show it with an example where we have a webpage listing publications. The
+publications are show in a list per year(section). The library also supports also
+simple lists, but if you understand the sectioned lists example, then you will also
+to be able to apply the library to simple lists. Therefore we do not give a simple
+list example to keep documentation short.
+
+```html
+<html>
+
+  <body>
+    <h1>Boolean Search Filter Example</h1>
+
+    <div id="mycontent">
+      <h1>2025</h1>
+      <ol>
+        <li>
+          publication 1
+        </li>
+        <li>
+         publication 2
+        </li>
+      <ol>
+      <h1>2024</h1>
+      <ol>
+        <li>
+          publication 3
+        </li>
+        <li>
+          publication 4
+        </li>
+      <ol>
+      ...
+    </div>
+  </body>
+</html>
 ```
 
-Or run the `main.js` via `bibber.html` in a browser using a fresh launched webserver:
+### BooleanSearch with an autoform
 
-```bash
-./launch_in_webserver.bash
+We can the add a boolean search form to this webpage by adding
+`<div id="mybooleansearch"></div>` in the webpage where the search form should be
+located, and then add javascript code to **auto**matically load the search **form**
+at that `div` tag. This javascript code specifies using a CSS selector
+`#mycontent > h1` at which tags the sections are, and a CSS selector `li` to specify
+the elements within that section.
+
+```html
+<html>
+  <script type="module">
+    import { BooleanSearch } from "./BooleanSearch.bundled.es.js";
+    new BooleanSearch()
+      .setSectionElementsCssSelector("#mycontent > h1")
+      .setElementsCssSelector("li")
+      .setId("mybooleansearch")
+      .setAutoForm()
+      .apply();
+  </script>
+
+  <body>
+    <h1>Boolean Search Filter Example</h1>
+
+    <div id="mybooleansearch"></div>
+
+    <div id="mycontent">
+      <h1>2025</h1>
+      <ol>
+        <li>
+          John Doe.
+          ...
+        <li>
+         ...
+      <ol>
+      <h1>2024</h1>
+      ...
+    </div>
+  </body>
+</html>
 ```
 
-## How to debug
+### BooleanSearch with an self supplied form
 
-In vscode there are two debug modes:
+#### Static form in HTML
 
-- "Launch main.js in node" Debug `main.js` in the node.js execution environment. All
-  browser specific code in main.js is disabled.
-- "Launch bibber.html(and main.js ) in webserver (requires Webserver task running)"
-  Debug `main.js` in browser execution environment. Before lauching this debug mode
-  your first have to launch the "Start Webserver" task. When launched the Edge
-  browser is opened with the `bibber.html` file. You can place breakpoints in your
-  typescript code. When an action in the browser causes javascript code to execute,
-  the debugger will stop at the related line of code in your typescript source using
-  map files.
+The simplest way to have self supplied form is to just put it in the `HTML` page.
 
-## How to distribute
+```html
+<html>
+  <script type="module">
+    import { BooleanSearch } from "./BooleanSearch.bundled.es.js";
+    new BooleanSearch()
+      .setSectionElementsCssSelector("#mycontent > h1")
+      .setElementsCssSelector("li")
+      .setId("BooleanSearch") // this call can be ommitted because this is the default id of the library
+      .apply();
+  </script>
 
-```sh
-./distribute.bash
+  <body>
+    <h1>Boolean Search Filter Example</h1>
+
+    <div id="BooleanSearch">
+    <form id="BooleanSearch_searchForm">
+      <input id="BooleanSearch_searchbox" type="text" aria-label="Search text" />
+      <button id="BooleanSearch_button" type="button" aria-label="Do Search">
+        Search
+      </button>
+    </form>
+    <div id="BooleanSearch_error" style="color: red; font-weight: bold"></div>
+    <div id="BooleanSearch_answer"></div>
+    </div>
+
+    <div id="mycontent">
+      <h1>2025</h1>
+      <ol>
+        <li>
+          John Doe.
+          ...
+        <li>
+         ...
+      <ol>
+      <h1>2024</h1>
+      ...
+    </div>
+  </body>
+</html>
 ```
 
-This will place all the necessary files in `dist/`, including an optimized version of
-`antlr4.web.mjs`. You can copy the content of this folder to a webserver and open
-`bibber.html` and everything should work.
+#### Dynamically loaded form in javascript
 
-## Cleanup project for git
+You can also have an `HTML` form defined in a javascript variable `formString` and
+call the `setForm(formString)` method on the BooleanSearch object to load the form in
+the page dynamically.
 
-```bash
-./clean.bash
+```html
+<html>
+  <script type="module">
+    import { BooleanSearch } from "./BooleanSearch.bundled.es.js";
+
+    const customId = "mybooleansearch";
+    const formString = `
+      <b> customform </b>
+      <form id="${customId}_searchForm">
+         <input id="${customId}_searchbox" type="text" aria-label="Search text" />
+         <button id="${customId}_button" type="button" aria-label="Do Search">
+         Search
+         </button>
+      </form>
+      <div id="${customId}_error" style="color: red; font-weight: bold"></div>
+      <div id="${customId}_answer"></div>
+    `;
+
+    new BooleanSearch()
+      .setSectionElementsCssSelector("#mycontent > h1")
+      .setElementsCssSelector("li")
+      .setId(customId)
+      .setForm(formString)
+      .apply();
+  </script>
+
+  <body>
+    <h1>Boolean Search Filter Example</h1>
+
+    <div id="mybooleansearch"></div>
+
+    <div id="mycontent">
+      <h1>2025</h1>
+      <ol>
+        <li>
+          John Doe.
+          ...
+        <li>
+         ...
+      <ol>
+      <h1>2024</h1>
+      ...
+    </div>
+  </body>
+</html>
 ```
 
-All generated files are cleaned up. All what remains is not redundant, and should be
-committed to git.
+## API of the BooleanSearch Class
 
-## Appendix: antlr for debugging
+The `BooleanSearch` class provides methods to set up and manage a boolean search
+functionality on an HTML page. It allows setting up search forms, defining CSS
+selectors for elements to be searched, and applying boolean search filters with
+optional highlighting of matched elements.
 
-When having a webpack file debugging is an hassle because the source in it is
-minimized. When we step into code at some point we see minimized (javascript) code in
-the webpack file which is unreadable. Solution: rebuild the webpack not minimized and
-use that in your project. => allows use to step into the packed source and to even
-put breakpoints there
+The `BooleanSearch` class implements a
+[fluent interface](https://en.wikipedia.org/wiki/Fluent_interface) which allows you
+to chain method calls on the `BooleanSearch` object for convenient configuration.
 
-0. get antlr4 source code
+Example of use of fluent interface:
 
-   ```bash
-    cd /tmp/
-    git clone https://github.com/antlr/antlr4/
-    cd antlr4/runtime/JavaScript/
-   ```
+```typescript
+import { BooleanSearch } from "./BooleanSearch.bundled.es.js";
+new BooleanSearch()
+  .setSectionElementsCssSelector("#mycontent > h1")
+  .setElementsCssSelector("li")
+  .setId("mybooleansearch")
+  .setAutoForm()
+  .apply();
+```
 
-1. install webpack tool
+### Methods
 
-   ```bash
-   npm install -g webpack # installs webpack tool globally
-   ```
+#### `setAutoForm()`
 
-2. edit webpack.config.js in which we change mode: "production" into "development" in
-   buildConfig object.
+Sets the auto-generated search form in the HTML element with the specified ID.
 
-3. run:
+**Returns:**
 
-   ```bash
-   npm install # install antlr4's project dependencies
-   webpack # make webbundle in dist folder
-   ```
+- `this`: The current instance of `BooleanSearch`.
 
-4. to also include the javascript sources in the webpack change in `package.json` the
-   lines
+#### `setForm(formString: string)`
 
-   ```
-   "files": [
-      "dist",
-      "src/**/*.d.cts",
-      "src/**/*.d.ts"
-   ],
-   ```
+Sets a custom search form in the HTML element with the specified ID.
 
-   into
+**Parameters:**
 
-   ```
-   "files": [
-      "dist",
-      "src/"
-   ],
-   ```
+- `formString` (`string`): The HTML string for the custom search form.
 
-5. use newly build webbundle:
+**Returns:**
 
-   ```
-   npm install -g # to install current build globally
+- `this`: The current instance of `BooleanSearch`.
 
-         or
+#### `setId(id: string)`
 
-   npm pack # to make a tgz (Eg. antlr4-4.13.2.tgz), and that package you can
-            # install locally in your project with
-   cp antlr4-4.13.2.tgz  $PROJECTDIR
-   cd $PROJECTDIR
-   npm install antlr4-4.13.2.tgz
-   ```
+Sets the ID of the HTML element where the search form will be inserted.
+
+**Parameters:**
+
+- `id` (`string`): The ID of the HTML element.
+
+**Returns:**
+
+- `this`: The current instance of `BooleanSearch`.
+
+#### `setElementsCssSelector(elementsCssSelector: string)`
+
+Sets the CSS selector for the elements to be searched.
+
+**Parameters:**
+
+- `elementsCssSelector` (`string`): The CSS selector for the elements.
+
+**Returns:**
+
+- `this`: The current instance of `BooleanSearch`.
+
+#### `setSectionElementsCssSelector(elementsCssSelector: string)`
+
+Sets the CSS selector for the section elements to be searched.
+
+**Parameters:**
+
+- `elementsCssSelector` (`string`): The CSS selector for the section elements.
+
+**Returns:**
+
+- `this`: The current instance of `BooleanSearch`.
+
+#### `setHtmlPageSpecificFilterAndMarkCallback(callback: (fn: BooleanSearch.filterAndMarkElementsFunc) => boolean)`
+
+Sets a callback function for filtering and marking elements on the HTML page.
+
+Internally in the library two of such callbacks are defined. One for filtering a
+simple list with `elementsCssSelector`. and one for a nested listed in sections with
+the `elementsCssSelector`.
+
+If you have a more specific case of elements scattered over the webpage you can use
+this function to write a custom callback the find each list and filter it with the
+`filterAndMarkElementsFunc` function given to the callback. It is advised to look in
+the BooleanSearch source code to get an idea how this works.
+
+**Parameters:**
+
+- `callback` (`(fn: BooleanSearch.filterAndMarkElementsFunc) => boolean`): The
+  callback function.
+
+**Returns:**
+
+- `this`: The current instance of `BooleanSearch`.
+
+#### `setHighlighting(active: boolean)`
+
+Enables or disables highlighting of matched elements.
+
+**Parameters:**
+
+- `active` (`boolean`): Whether highlighting should be active.
+
+**Returns:**
+
+- `this`: The current instance of `BooleanSearch`.
+
+#### `apply()`
+
+Applies the search functionality to the HTML page.
