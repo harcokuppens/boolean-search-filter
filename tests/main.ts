@@ -1,4 +1,4 @@
-import { BooleanSearch } from '../src/BooleanSearch.js';
+import { BooleanSearch, BooleanSearchTypes } from '../src/BooleanSearch.ts';
 
 
 //  apply page specific filtering and marking
@@ -33,7 +33,7 @@ new BooleanSearch().setSectionElementsCssSelector("#wikitext > h1").setElementsC
 
 
 
-function htmlPageSpecificFilterAndMark(filterAndMarkElements: BooleanSearch.filterAndMarkElementsFunc): boolean {
+function htmlPageSpecificFilterAndMark(filterAndMarkElements: BooleanSearchTypes.filterAndMarkElementsFunc): boolean {
 
     //function htmlPageSpecificFilterAndMark(filterAndMarkElements: (elements: NodeListOf<HTMLElement>) => boolean): boolean {
 

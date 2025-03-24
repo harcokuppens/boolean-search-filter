@@ -1,12 +1,12 @@
 import BooleanExpression from '@harcokuppens/boolean-expression';
 import { markText, unMarkText } from '@harcokuppens/highlight-words';
 
-export namespace BooleanSearch {
+export namespace BooleanSearchTypes {
     export type filterAndMarkElementsFunc = (nodes: NodeListOf<HTMLElement>) => boolean;
 }
 
 export class BooleanSearch {
-    private htmlPageSpecificFilterAndMarkCallback: ((fn: BooleanSearch.filterAndMarkElementsFunc) => boolean) | null = null;
+    private htmlPageSpecificFilterAndMarkCallback: ((fn: BooleanSearchTypes.filterAndMarkElementsFunc) => boolean) | null = null;
     private elementsCssSelectorForItems: string = "li";
     private elementsCssSelectorForSectionItems: string | null = null;
     private highlightingActive: boolean = true;
@@ -21,10 +21,15 @@ export class BooleanSearch {
         const formString: string = `
         
         <form id="${this.id}_searchForm">
-            <input id="${this.id}_searchbox" type="text" aria-label="Search text" style="width: 500px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; " />
+            <input id="${this.id}_searchbox" type="text" aria-label="Type boolean search expression here..." style="width: 500px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; " />
             <button id="${this.id}_button" type="button" aria-label="Do Search">
             Search
-            </button><br>
+            </button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <label>
+            Case Sensitive <input type="checkbox" id="caseSensitiveCheckbox" onclick="toggleCaseSensitive()"> 
+            </label>
+            <br>
             <small> <b> &nbsp;&nbsp;&nbsp; <a href="https://www.npmjs.com/package/boolean-search-filter"> boolean search supported</a>: </b> eg. (John OR "Jane Smith") AND NOT journal </small>
         </form>
         <div id="${this.id}_error" style="color: red; font-weight: bold"></div>
@@ -33,6 +38,16 @@ export class BooleanSearch {
         document.getElementById(this.id)!.innerHTML = formString;
         return this;
     }
+
+    /*
+        <input size="40"  id="wordInput" placeholder="Type words here..."></input>
+        <button id="button" onclick="highlightWords()">Search</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <label>
+          Case Sensitive <input type="checkbox" id="caseSensitiveCheckbox" onclick="toggleCaseSensitive()"> 
+        </label>
+    
+    */
 
     /**
      * Sets a custom search form in the HTML element with the specified ID.
@@ -79,7 +94,7 @@ export class BooleanSearch {
      * @param {(fn: BooleanSearch.filterAndMarkElementsFunc) => boolean} callback - The callback function.
      * @returns {this} The current instance of BooleanSearch.
      */
-    setHtmlPageSpecificFilterAndMarkCallback(callback: (fn: BooleanSearch.filterAndMarkElementsFunc) => boolean): this {
+    setHtmlPageSpecificFilterAndMarkCallback(callback: (fn: BooleanSearchTypes.filterAndMarkElementsFunc) => boolean): this {
         this.htmlPageSpecificFilterAndMarkCallback = callback;
         return this;
     }
@@ -111,6 +126,7 @@ export class BooleanSearch {
         document.addEventListener('DOMContentLoaded', function () {
             const button = document.getElementById(`${booleansearch.id}_button`);
             const searchbox = document.getElementById(`${booleansearch.id}_searchbox`) as HTMLInputElement;
+            const checkbox = document.getElementById(`${booleansearch.id}_checkbox`) as HTMLInputElement;
             const form = document.getElementById(`${booleansearch.id}_searchForm`) as HTMLFormElement;
             const answer = document.getElementById(`${booleansearch.id}_answer`) as HTMLElement;
             const error = document.getElementById(`${booleansearch.id}_error`) as HTMLElement;
@@ -146,6 +162,24 @@ export class BooleanSearch {
                     }
                 });
             }
+            /*
+                        if (checkbox && button) {
+                            searchbox.addEventListener('keyup', function (event) {
+                                if (event.key === 'Enter') {
+                                    event.preventDefault();
+                                    button.click();
+                                    searchbox.blur(); // makes popup selectbox disappear
+                                    searchbox.focus(); // sets focus back so that you can continue typing if wanted
+                                }
+                            });
+                        }
+                        window.caseSensitive = false;
+                        window.toggleCaseSensitive = function () {
+                            window.caseSensitive = !window.caseSensitive;
+                            button.click();
+                        };
+                        */
+
             if (form) {
                 form.addEventListener('submit', function (event) {
                     event.preventDefault(); // Prevent form submission
@@ -171,7 +205,7 @@ export class BooleanSearch {
      * @param {BooleanSearch.filterAndMarkElementsFunc} filterAndMarkElements - The callback function to filter and mark elements.
      * @returns {boolean} Whether any elements matched the boolean expression.
      */
-    private elementsPageFilterAndMarkCallback(filterAndMarkElements: BooleanSearch.filterAndMarkElementsFunc): boolean {
+    private elementsPageFilterAndMarkCallback(filterAndMarkElements: BooleanSearchTypes.filterAndMarkElementsFunc): boolean {
         const elements = document.querySelectorAll<HTMLElement>(this.elementsCssSelectorForItems);
         let foundMatch: boolean = filterAndMarkElements(elements);
         return foundMatch;
@@ -182,7 +216,7 @@ export class BooleanSearch {
      * @param {BooleanSearch.filterAndMarkElementsFunc} filterAndMarkElements - The callback function to filter and mark elements.
      * @returns {boolean} Whether any elements matched the boolean expression.
      */
-    private sectionedElementsPageFilterAndMarkCallback(filterAndMarkElements: BooleanSearch.filterAndMarkElementsFunc): boolean {
+    private sectionedElementsPageFilterAndMarkCallback(filterAndMarkElements: BooleanSearchTypes.filterAndMarkElementsFunc): boolean {
         let anyMatchFound = false;
         // Select all <sectionElement> elements inside the element with ID 'wikitext'
         // only if elementsCssSelectorForSectionItems is not null is this method used!

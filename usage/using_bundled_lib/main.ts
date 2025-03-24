@@ -1,4 +1,4 @@
-import { BooleanSearch } from './BooleanSearch.bundled.es.js';
+import { BooleanSearch, BooleanSearchTypes } from './BooleanSearch.bundled.es.js';
 
 
 //  apply page specific filtering and marking
@@ -23,6 +23,7 @@ const formString: string = `
 <div id="${customId}_answer"></div>
 `;
 
+//new BooleanSearch().setSectionElementsCssSelector("#mycontent > h1").setElementsCssSelector("li").setForm(formString).setId(customId).apply();
 new BooleanSearch().setSectionElementsCssSelector("#mycontent > h1").setElementsCssSelector("li").setId(customId).setForm(formString).apply();
 
 // autoform
@@ -41,7 +42,7 @@ new BooleanSearch().setSectionElementsCssSelector("#mycontent > h1").setElements
 
 
 
-function htmlPageSpecificFilterAndMark(filterAndMarkElements: BooleanSearch.filterAndMarkElementsFunc): boolean {
+function htmlPageSpecificFilterAndMark(filterAndMarkElements: BooleanSearchTypes.filterAndMarkElementsFunc): boolean {
 
     //function htmlPageSpecificFilterAndMark(filterAndMarkElements: (elements: NodeListOf<HTMLElement>) => boolean): boolean {
 

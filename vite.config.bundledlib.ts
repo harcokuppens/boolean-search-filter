@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 
-
 // build a bundled lib with all dependencies included
 export default defineConfig({
     // without base, the default is "base: '/'"
