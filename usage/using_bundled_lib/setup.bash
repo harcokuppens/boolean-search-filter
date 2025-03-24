@@ -11,4 +11,9 @@ cp ../../types/BooleanSearch.d.ts BooleanSearch.bundled.es.d.ts
 # transpile main.ts to main.js
 tsc --target es2022 --module es2022 --moduleResolution node --sourcemap main.ts
 # open index.html which uses main.js in webserver
-npx http-server -a localhost -p 1234 -o index.html
+printf "\n\n\nINSTRUCTIONS\n"
+echo "The browsers opens a folder listing of files in this folder. Click on:"
+echo "1. index.maints.html : to see example with html file using main.js(from main.ts) file"
+echo "2. index.inlinejs.html : to see example using inline javascript in html file"
+printf "\n\n\n"
+NODE_OPTIONS='--disable-warning=ExperimentalWarning --disable-warning=DeprecationWarning' NPM_CONFIG_LOGLEVEL=silent npx http-server -s -a localhost -p 1234 -o
