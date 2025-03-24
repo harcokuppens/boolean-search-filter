@@ -1,4 +1,4 @@
-import { BooleanSearch, BooleanSearchTypes } from '../src/BooleanSearch.ts';
+import { BooleanSearch } from '../src/BooleanSearch.ts';
 
 
 //  apply page specific filtering and marking

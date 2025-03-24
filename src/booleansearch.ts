@@ -1,12 +1,12 @@
 import BooleanExpression from '@harcokuppens/boolean-expression';
 import { markText, unMarkText } from '@harcokuppens/highlight-words';
 
-export namespace BooleanSearchTypes {
+export namespace BooleanSearch {
     export type filterAndMarkElementsFunc = (nodes: NodeListOf<HTMLElement>) => boolean;
 }
 
 export class BooleanSearch {
-    private htmlPageSpecificFilterAndMarkCallback: ((fn: BooleanSearchTypes.filterAndMarkElementsFunc) => boolean) | null = null;
+    private htmlPageSpecificFilterAndMarkCallback: ((fn: BooleanSearch.filterAndMarkElementsFunc) => boolean) | null = null;
     private elementsCssSelectorForItems: string = "li";
     private elementsCssSelectorForSectionItems: string | null = null;
     private highlightingActive: boolean = true;
@@ -94,7 +94,7 @@ export class BooleanSearch {
      * @param {(fn: BooleanSearch.filterAndMarkElementsFunc) => boolean} callback - The callback function.
      * @returns {this} The current instance of BooleanSearch.
      */
-    setHtmlPageSpecificFilterAndMarkCallback(callback: (fn: BooleanSearchTypes.filterAndMarkElementsFunc) => boolean): this {
+    setHtmlPageSpecificFilterAndMarkCallback(callback: (fn: BooleanSearch.filterAndMarkElementsFunc) => boolean): this {
         this.htmlPageSpecificFilterAndMarkCallback = callback;
         return this;
     }
@@ -205,7 +205,7 @@ export class BooleanSearch {
      * @param {BooleanSearch.filterAndMarkElementsFunc} filterAndMarkElements - The callback function to filter and mark elements.
      * @returns {boolean} Whether any elements matched the boolean expression.
      */
-    private elementsPageFilterAndMarkCallback(filterAndMarkElements: BooleanSearchTypes.filterAndMarkElementsFunc): boolean {
+    private elementsPageFilterAndMarkCallback(filterAndMarkElements: BooleanSearch.filterAndMarkElementsFunc): boolean {
         const elements = document.querySelectorAll<HTMLElement>(this.elementsCssSelectorForItems);
         let foundMatch: boolean = filterAndMarkElements(elements);
         return foundMatch;
@@ -216,7 +216,7 @@ export class BooleanSearch {
      * @param {BooleanSearch.filterAndMarkElementsFunc} filterAndMarkElements - The callback function to filter and mark elements.
      * @returns {boolean} Whether any elements matched the boolean expression.
      */
-    private sectionedElementsPageFilterAndMarkCallback(filterAndMarkElements: BooleanSearchTypes.filterAndMarkElementsFunc): boolean {
+    private sectionedElementsPageFilterAndMarkCallback(filterAndMarkElements: BooleanSearch.filterAndMarkElementsFunc): boolean {
         let anyMatchFound = false;
         // Select all <sectionElement> elements inside the element with ID 'wikitext'
         // only if elementsCssSelectorForSectionItems is not null is this method used!

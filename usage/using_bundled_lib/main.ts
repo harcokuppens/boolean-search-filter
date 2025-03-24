@@ -1,4 +1,4 @@
-import { BooleanSearch, BooleanSearchTypes } from './BooleanSearch.bundled.es.js';
+import { BooleanSearch } from './BooleanSearch.bundled.es.js';
 
 
 //  apply page specific filtering and marking
@@ -42,7 +42,7 @@ new BooleanSearch().setSectionElementsCssSelector("#mycontent > h1").setElements
 
 
 
-function htmlPageSpecificFilterAndMark(filterAndMarkElements: BooleanSearchTypes.filterAndMarkElementsFunc): boolean {
+function htmlPageSpecificFilterAndMark(filterAndMarkElements: BooleanSearch.filterAndMarkElementsFunc): boolean {
 
     //function htmlPageSpecificFilterAndMark(filterAndMarkElements: (elements: NodeListOf<HTMLElement>) => boolean): boolean {
 
