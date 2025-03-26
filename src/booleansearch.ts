@@ -10,7 +10,7 @@ export class BooleanSearch {
     private elementsCssSelectorForItems: string = "li";
     private elementsCssSelectorForSectionItems: string | null = null;
     private highlightingActive: boolean = true;
-
+    private caseSensitive = false;
     private id = "BooleanSearch";
 
     /**
@@ -27,7 +27,7 @@ export class BooleanSearch {
             </button>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <label>
-            Case Sensitive <input type="checkbox" id="caseSensitiveCheckbox" onclick="toggleCaseSensitive()"> 
+            Case Sensitive <input type="checkbox" id="${this.id}_checkbox" > 
             </label>
             <br>
             <small> <b> &nbsp;&nbsp;&nbsp; <a href="https://www.npmjs.com/package/boolean-search-filter"> boolean search supported</a>: </b> eg. (John OR "Jane Smith") AND NOT journal </small>
@@ -36,6 +36,7 @@ export class BooleanSearch {
         <div id="${this.id}_answer"></div>
         `;
         document.getElementById(this.id)!.innerHTML = formString;
+
         return this;
     }
 
@@ -81,6 +82,13 @@ export class BooleanSearch {
 
     /**
      * Sets the CSS selector for the section elements to be searched.
+     * 
+     * If this method is called then we have multiple lists, one per section, where 
+     * sections are selected by the `sectionElementsCssSelector`, and elements within 
+     * the section with the `elementsCssSelector`. When this method is not called the 
+     * library only uses the `elementsCssSelector` for a single list of elements 
+     * without any sections.
+     * 
      * @param {string} elementsCssSelector - The CSS selector for the section elements.
      * @returns {this} The current instance of BooleanSearch.
      */
@@ -108,6 +116,13 @@ export class BooleanSearch {
         this.highlightingActive = active;
         return this;
     }
+
+    toggleCaseSensitive(): void {
+        console.log("toggleCaseSensitive");
+        this.caseSensitive = !this.caseSensitive;
+    }
+
+
 
     /**
      * Applies the search functionality to the HTML page.
@@ -160,6 +175,13 @@ export class BooleanSearch {
                         searchbox.blur(); // makes popup selectbox disappear
                         searchbox.focus(); // sets focus back so that you can continue typing if wanted
                     }
+                });
+            }
+
+            if (checkbox && button) {
+                checkbox.addEventListener('click', function () {
+                    booleansearch.toggleCaseSensitive();
+                    button.click(); // trigger search again but with new case sensitivity
                 });
             }
             /*
@@ -261,7 +283,7 @@ export class BooleanSearch {
 
             // check boolean expression matches
             let foundMatch = false;
-            if (itemElement.textContent) foundMatch = booleanExpr.match(itemElement.textContent);
+            if (itemElement.textContent) foundMatch = booleanExpr.match(itemElement.textContent, this.caseSensitive);
 
             // hide none matched items
             if (foundMatch) {
@@ -278,7 +300,7 @@ export class BooleanSearch {
                     unMarkText(itemElement);
                     // Highlight each search term in the item
                     for (const value of highlightValues) {
-                        markText(itemElement, value);
+                        markText(itemElement, value, this.caseSensitive);
                     }
                 }
             }

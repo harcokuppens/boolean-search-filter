@@ -10,22 +10,26 @@ with a checkbox be done either case sensitive or case insensitive.
 <!--ts-->
 <!-- prettier-ignore -->
    * [Description](#description)
+   * [Online example](#online-example)
    * [Boolean expression](#boolean-expression)
    * [Usage](#usage)
-      * [Example webpage](#example-webpage)
-      * [BooleanSearch with an autoform](#booleansearch-with-an-autoform)
-      * [BooleanSearch with an self supplied form](#booleansearch-with-an-self-supplied-form)
-         * [Static form in HTML](#static-form-in-html)
-         * [Dynamically loaded form in javascript](#dynamically-loaded-form-in-javascript)
+      * [1. Use in a typescript project using which uses lib as dependency.](#1-use-in-a-typescript-project-using-which-uses-lib-as-dependency)
+      * [2. Use in HTML page directly using bundled lib.](#2-use-in-html-page-directly-using-bundled-lib)
+         * [Example webpage](#example-webpage)
+         * [BooleanSearch with an autoform](#booleansearch-with-an-autoform)
+         * [BooleanSearch with an self supplied form](#booleansearch-with-an-self-supplied-form)
+            * [Static form in HTML](#static-form-in-html)
+            * [Dynamically loaded form in javascript](#dynamically-loaded-form-in-javascript)
+   * [Installation](#installation)
    * [API of the BooleanSearch Class](#api-of-the-booleansearch-class)
       * [Methods](#methods)
+         * [setId(id: string)](#setidid-string)
          * [setAutoForm()](#setautoform)
          * [setForm(formString: string)](#setformformstring-string)
-         * [setId(id: string)](#setidid-string)
          * [setElementsCssSelector(elementsCssSelector: string)](#setelementscssselectorelementscssselector-string)
-         * [setSectionElementsCssSelector(elementsCssSelector: string)](#setsectionelementscssselectorelementscssselector-string)
-         * [setHtmlPageSpecificFilterAndMarkCallback(callback: (fn: BooleanSearch.filterAndMarkElementsFunc) =&gt; boolean)](#sethtmlpagespecificfilterandmarkcallbackcallback-fn-booleansearchfilterandmarkelementsfunc--boolean)
+         * [setSectionElementsCssSelector(sectionElementsCssSelector: string)](#setsectionelementscssselectorsectionelementscssselector-string)
          * [setHighlighting(active: boolean)](#sethighlightingactive-boolean)
+         * [setHtmlPageSpecificFilterAndMarkCallback(callback: (fn: BooleanSearch.filterAndMarkElementsFunc) =&gt; boolean)](#sethtmlpagespecificfilterandmarkcallbackcallback-fn-booleansearchfilterandmarkelementsfunc--boolean)
          * [apply()](#apply)
 <!--te-->
 
@@ -41,6 +45,14 @@ typescript to evaluate a boolean expression with words on a give text. The match
 items after filtering will then be shown with the search words highlighted.
 Highlighting is done with the
 [hightlight words library](https://github.com/harcokuppens/highlight-words).
+
+## Online example
+
+To see the boolean search filter library directly in action look at the following
+[url](https://www.nu.nl). The source code of this example is at the subfolder
+`./example/`.
+
+
 
 ## Boolean expression
 
@@ -92,11 +104,31 @@ message 'Error in boolean search term' is displayed.
 
 ## Usage
 
+Their are two ways you can use the BooleanSearch library. The first way is use the
+library in a typescript project. The second way is to use the bundled version of the
+library to directly use it in a `HTML` file. The first way we briefly discuss and
+then give you an example. The second way we discuss in more detail to clearly show
+how the library can be used.
+
+### 1. Use in a typescript project using which uses lib as dependency.
+
+We can create with `npm` an typescript project which adds the `boolean-search-filter`
+library as a library dependency. In the project's `main.ts` script we import the
+`boolean-search-filter` library and apply it to the `index.html` file. When deploying
+the project we use `vite` to transpile all typescript code to a single javascript
+bundle. The `vite` tool also modifies the deployed `index.html` to load this
+javascript bundle. Then for deploying this application we only need to put the
+`index.html` and its corresponding javascript bundle to the webserver. An example of
+such a project is in the subfolder `usage/using_npm_lib_bundled_with_deps_by_vite/`.
+
+### 2. Use in `HTML` page directly using bundled lib.
+
 We first show an example `HTML` page and then show how to enable `Boolean search` on
 it using with either an automatically applied form by the library or by a
-self-supplied form.
+self-supplied form. The source code of these examples are in the subfolder
+`usage/using_bundled_lib/`.
 
-### Example webpage
+#### Example webpage
 
 We show it with an example where we have a webpage listing publications. The
 publications are show in a list per year(section). The library also supports also
@@ -135,7 +167,7 @@ list example to keep documentation short.
 </html>
 ```
 
-### BooleanSearch with an autoform
+#### BooleanSearch with an autoform
 
 We can the add a boolean search form to this webpage by adding
 `<div id="mybooleansearch"></div>` in the webpage where the search form should be
@@ -177,9 +209,11 @@ the elements within that section.
 </html>
 ```
 
-### BooleanSearch with an self supplied form
+The source code of these examples are in the subfolder `usage/using_bundled_lib/`.
 
-#### Static form in HTML
+#### BooleanSearch with an self supplied form
+
+##### Static form in HTML
 
 The simplest way to have self supplied form is to just put it in the `HTML` page.
 
@@ -224,7 +258,9 @@ The simplest way to have self supplied form is to just put it in the `HTML` page
 </html>
 ```
 
-#### Dynamically loaded form in javascript
+The source code of these examples are in the subfolder `usage/using_bundled_lib/`.
+
+##### Dynamically loaded form in javascript
 
 You can also have an `HTML` form defined in a javascript variable `formString` and
 call the `setForm(formString)` method on the BooleanSearch object to load the form in
@@ -277,6 +313,18 @@ the page dynamically.
 </html>
 ```
 
+The source code of these examples are in the subfolder `usage/using_bundled_lib/`.
+
+## Installation
+
+The bundled library can be download from the github projects releases page.
+
+When using the project in a typescript project you can install it easily with `npm` using the command:
+
+``` 
+npm install boolean-search-filter
+``` 
+
 ## API of the BooleanSearch Class
 
 The `BooleanSearch` class provides methods to set up and manage a boolean search
@@ -302,6 +350,18 @@ new BooleanSearch()
 
 ### Methods
 
+#### `setId(id: string)`
+
+Sets the ID of the HTML element where the search form will be inserted.
+
+**Parameters:**
+
+- `id` (`string`): The ID of the HTML element.
+
+**Returns:**
+
+- `this`: The current instance of `BooleanSearch`.
+
 #### `setAutoForm()`
 
 Sets the auto-generated search form in the HTML element with the specified ID.
@@ -322,37 +382,41 @@ Sets a custom search form in the HTML element with the specified ID.
 
 - `this`: The current instance of `BooleanSearch`.
 
-#### `setId(id: string)`
-
-Sets the ID of the HTML element where the search form will be inserted.
-
-**Parameters:**
-
-- `id` (`string`): The ID of the HTML element.
-
-**Returns:**
-
-- `this`: The current instance of `BooleanSearch`.
-
 #### `setElementsCssSelector(elementsCssSelector: string)`
 
 Sets the CSS selector for the elements to be searched.
 
 **Parameters:**
 
-- `elementsCssSelector` (`string`): The CSS selector for the elements.
+- `sectionElementsCssSelector` (`string`): The CSS selector for the elements.
 
 **Returns:**
 
 - `this`: The current instance of `BooleanSearch`.
 
-#### `setSectionElementsCssSelector(elementsCssSelector: string)`
+#### `setSectionElementsCssSelector(sectionElementsCssSelector: string)`
 
-Sets the CSS selector for the section elements to be searched.
+Sets the CSS selector for the section elements to be searched. If this method is
+called then we have multiple lists, one per section, where sections are selected by
+the `sectionElementsCssSelector`, and elements within the section with the
+`elementsCssSelector`. When this method is not called the library only uses the
+`elementsCssSelector` for a single list of elements without any sections.
 
 **Parameters:**
 
-- `elementsCssSelector` (`string`): The CSS selector for the section elements.
+- `sectionElementsCssSelector` (`string`): The CSS selector for the section elements.
+
+**Returns:**
+
+- `this`: The current instance of `BooleanSearch`.
+
+#### `setHighlighting(active: boolean)`
+
+Enables or disables highlighting of matched elements.
+
+**Parameters:**
+
+- `active` (`boolean`): Whether highlighting should be active.
 
 **Returns:**
 
@@ -375,18 +439,6 @@ the BooleanSearch source code to get an idea how this works.
 
 - `callback` (`(fn: BooleanSearch.filterAndMarkElementsFunc) => boolean`): The
   callback function.
-
-**Returns:**
-
-- `this`: The current instance of `BooleanSearch`.
-
-#### `setHighlighting(active: boolean)`
-
-Enables or disables highlighting of matched elements.
-
-**Parameters:**
-
-- `active` (`boolean`): Whether highlighting should be active.
 
 **Returns:**
 
