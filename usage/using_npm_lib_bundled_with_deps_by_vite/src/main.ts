@@ -1,4 +1,4 @@
-import { BooleanSearch } from '@harcokuppens/boolean-search';
+import { BooleanSearch } from 'boolean-search-filter';
 
 // autoform
 const customId = "BooleanSearch";

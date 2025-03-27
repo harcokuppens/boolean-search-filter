@@ -35,7 +35,7 @@
         "cleanall": "npm run clean ; rm -rf  node_modules/"
     },
     "dependencies": {
-        "@harcokuppens/boolean-search": "^1.0.0"
+        "boolean-search-filter": "^1.0.0"
     },
     "devDependencies": {
         "@types/node": "^22.13.4",
