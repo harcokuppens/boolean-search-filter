@@ -5,7 +5,12 @@ expression of words, making none-matched items hidden, and making the searched w
 highlighted in the matched items. Matching of the words in the boolean expression can
 with a checkbox be done either case sensitive or case insensitive.
 
-<img src="boolean_search_example.jpg" alt="example of Boolean search filter" style="width:600px;margin-left:auto;margin-right:auto;"/>
+Below image shows the boolean search filter library in action. You can also see the
+library directly in action look at the following
+[url](https://raw.githack.com/harcokuppens/boolean-search-filter/ac1f976ebc9feac38f76909d952ef25e6996775e/example/index.html).
+The source code of this example is at the subfolder `./example/`.
+
+<img src="boolean_search_example.jpg" alt="example of Boolean search filter" style="display: block;width:70%;margin-left:auto;margin-right:auto;"/>
 
 ## Table of contents
 
