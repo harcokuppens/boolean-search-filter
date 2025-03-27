@@ -1,5 +1,5 @@
 {
-    "name": "@harcokuppens/boolean-search",
+    "name": "@harcokuppens/boolean-search-filter",
     "type": "module",
     "version": "1.0.0",
     "description": "library to search items using a boolean expression of words and highlight the words in the result",
@@ -14,7 +14,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/harcokuppens/boolean-search"
+        "url": "https://github.com/harcokuppens/boolean-search-filter"
     },
     "main": "src/BooleanSearch.ts",
     "types": "types/BooleanSearch.d.ts",
@@ -46,7 +46,6 @@
         "@types/node": "^22.13.4",
         "tslint": "^5.20.1",
         "typescript": "^5.8.2",
-        "vite": "^6.2.0",
-        "vite-plugin-dts": "^4.5.3"
+        "vite": "^6.2.0"
     }
 }
