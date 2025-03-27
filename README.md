@@ -51,8 +51,8 @@ Highlighting is done with the
 ## Online example
 
 To see the boolean search filter library directly in action look at the following
-[url](https://www.nu.nl). The source code of this example is at the subfolder
-`./example/`.
+[url](https://raw.githack.com/harcokuppens/boolean-search-filter/ac1f976ebc9feac38f76909d952ef25e6996775e/example/index.html).
+The source code of this example is at the subfolder `./example/`.
 
 ## Boolean expression
 
