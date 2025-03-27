@@ -2,16 +2,17 @@
   <script type="module">
     import { BooleanSearch } from "./BooleanSearch.bundled.es.js";
     new BooleanSearch()
-      .setSectionElementsCssSelector("#mycontent > h1")
-      .setElementsCssSelector("li")
       .setId("mybooleansearch")
       .setAutoForm()
+      .setSectionElementsCssSelector("#mycontent > h1")
+      .setElementsCssSelector("li")
       .apply();
   </script>
 
   <body>
     <h1>Boolean Search Filter Example</h1>
 
+    <b> Automatic generated form</b>
     <div id="mybooleansearch"></div>
 
     <div id="mycontent">

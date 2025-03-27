@@ -1,4 +1,4 @@
-import { BooleanSearch } from '@harcokuppens/boolean-search';
+import { BooleanSearch } from '../src/BooleanSearch.ts';
 
 // autoform
 const customId = "BooleanSearch";
@@ -9,3 +9,4 @@ new BooleanSearch().setId(customId)
     .setSectionElementsCssSelector(sectionElementsCssSelector)
     .setElementsCssSelector(elementsCssSelector)
     .apply();
+

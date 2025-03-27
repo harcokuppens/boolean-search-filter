@@ -1,26 +1,39 @@
 <html>
-  <script type="module" src="./tests/main.autoform.ts"></script>
+  <script type="module">
+    import { BooleanSearch } from "./BooleanSearch.bundled.es.js";
+    const customId = "mybooleansearch";
+    const formString = `       
+<b> injected custom form </b>
+<form id="${customId}_searchForm">
+    <input id="${customId}_searchbox" type="text" placeholder="Type boolean search expression here..." aria-label="Type boolean search expression here..." style="width: 500px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; " />
+    <button id="${customId}_button" type="button" aria-label="Do Search">
+    Search
+    </button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <label>
+    Case Sensitive <input type="checkbox" id="${customId}_checkbox" > 
+    </label>
+    <br>
+    <small> <b> &nbsp;&nbsp;&nbsp; <a href="https://www.npmjs.com/package/boolean-search-filter"> boolean search supported</a>: </b> eg. (John OR "Jane Smith") AND NOT journal </small>
+</form>
+<div id="${customId}_error" style="color: red; font-weight: bold"></div>
+<div id="${customId}_answer"></div>
+`;
+    const sectionElementsCssSelector = "#mycontent > h1";
+    const elementsCssSelector = "li";
+    new BooleanSearch()
+      .setId(customId)
+      .setForm(formString)
+      .setSectionElementsCssSelector(sectionElementsCssSelector)
+      .setElementsCssSelector(elementsCssSelector)
+      .apply();
+  </script>
+
   <body>
-    <div id="Bla"></div>
     <h1>Boolean Search Filter Example</h1>
 
-    <div id="BooleanSearch">
-      <b> inline form without checkbox for case sensitivity (default:insensitive)</b>
-      <form id="BooleanSearch_searchForm">
-        <input
-          id="BooleanSearch_searchbox"
-          type="text"
-          placeholder="Type boolean search expression here..."
-          aria-label="Search text"
-          style="width: 500px"
-        />
-        <button id="BooleanSearch_button" type="button" aria-label="Do Search">
-          Search
-        </button>
-      </form>
-      <div id="BooleanSearch_error" style="color: red; font-weight: bold"></div>
-      <div id="BooleanSearch_answer"></div>
-    </div>
+    <b> User custom form injected using javascript</b>
+    <div id="mybooleansearch"></div>
 
     <div id="mycontent">
       <h1>2025</h1>

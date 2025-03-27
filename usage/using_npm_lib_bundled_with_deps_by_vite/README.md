@@ -16,6 +16,17 @@ application. So, instead of a big bundled library with is dependencies bundled i
 now fetch each library and its dependencies separate, and let vite bundle the whole
 thing when deploying the application.
 
+Note however that during development that we have in the `index.html`:
+
+```
+<script type="module" src="./src/main.ts"></script>
+```
+
+This means that we include the main typescript from the `HTML` file. The
+`vite dev server` tool will on request of this file server a the transpiled
+javascript file on the fly. This means that when developing with `vite` we can forgot
+about javascript and just develop in a typescript only world!
+
 ## Setup instructions
 
 We already setup a project for this example application using a `package.json` and a

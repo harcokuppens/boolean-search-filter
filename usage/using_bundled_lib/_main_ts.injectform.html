@@ -1,26 +1,11 @@
 <html>
-  <script type="module" src="./tests/main.autoform.ts"></script>
+  <script type="module" src="./main.injectform.js"></script>
+
   <body>
-    <div id="Bla"></div>
     <h1>Boolean Search Filter Example</h1>
 
-    <div id="BooleanSearch">
-      <b> inline form without checkbox for case sensitivity (default:insensitive)</b>
-      <form id="BooleanSearch_searchForm">
-        <input
-          id="BooleanSearch_searchbox"
-          type="text"
-          placeholder="Type boolean search expression here..."
-          aria-label="Search text"
-          style="width: 500px"
-        />
-        <button id="BooleanSearch_button" type="button" aria-label="Do Search">
-          Search
-        </button>
-      </form>
-      <div id="BooleanSearch_error" style="color: red; font-weight: bold"></div>
-      <div id="BooleanSearch_answer"></div>
-    </div>
+    <b> User custom form injected using javascript</b>
+    <div id="mybooleansearch"></div>
 
     <div id="mycontent">
       <h1>2025</h1>

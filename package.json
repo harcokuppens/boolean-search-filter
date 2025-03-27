@@ -19,6 +19,7 @@
     "main": "src/BooleanSearch.ts",
     "types": "types/BooleanSearch.d.ts",
     "files": [
+        "index.html",
         "dist",
         "types",
         "src",

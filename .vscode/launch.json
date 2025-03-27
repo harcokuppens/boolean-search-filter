@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch Vite",
       "url": "http://localhost:5173",
-      "webRoot": "${workspaceFolder}/src",
+      "webRoot": "${workspaceFolder}",
       // "preLaunchTask": "npm: dev",
       "preLaunchTask": "vite dev server",
       // note: we do not need to run 'tsc' because vite itself does the compiling!!

@@ -5,6 +5,8 @@ expression of words, making none-matched items hidden, and making the searched w
 highlighted in the matched items. Matching of the words in the boolean expression can
 with a checkbox be done either case sensitive or case insensitive.
 
+<img src="boolean_search_example.jpg" alt="example of Boolean search filter" style="width:600px;margin-left:auto;margin-right:auto;"/>
+
 ## Table of contents
 
 <!--ts-->
@@ -51,8 +53,6 @@ Highlighting is done with the
 To see the boolean search filter library directly in action look at the following
 [url](https://www.nu.nl). The source code of this example is at the subfolder
 `./example/`.
-
-
 
 ## Boolean expression
 
@@ -319,11 +319,12 @@ The source code of these examples are in the subfolder `usage/using_bundled_lib/
 
 The bundled library can be download from the github projects releases page.
 
-When using the project in a typescript project you can install it easily with `npm` using the command:
+When using the project in a typescript project you can install it easily with `npm`
+using the command:
 
-``` 
+```
 npm install boolean-search-filter
-``` 
+```
 
 ## API of the BooleanSearch Class
 

@@ -10,7 +10,7 @@ cp ../../dist_bundledlib/* .
 cp ../../types/BooleanSearch.d.ts BooleanSearch.bundled.es.d.ts
 # main.ts imports /BooleanSearch.es.js
 # transpile main.ts to main.js
-tsc --target es2022 --module es2022 --moduleResolution node --sourcemap main.ts
+tsc --target es2022 --module es2022 --moduleResolution node --sourcemap main.*.ts
 # open index.html which uses main.js in webserver
 INSTRUCTIONS="
 

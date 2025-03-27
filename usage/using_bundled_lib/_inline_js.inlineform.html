@@ -1,25 +1,54 @@
 <html>
-  <script type="module" src="./tests/main.autoform.ts"></script>
+  <script type="module">
+    import { BooleanSearch } from "./BooleanSearch.bundled.es.js";
+    const customId = "mybooleansearch";
+    const sectionElementsCssSelector = "#mycontent > h1";
+    const elementsCssSelector = "li";
+    new BooleanSearch()
+      .setId(customId)
+      .setSectionElementsCssSelector(sectionElementsCssSelector)
+      .setElementsCssSelector(elementsCssSelector)
+      .apply();
+  </script>
+
   <body>
-    <div id="Bla"></div>
     <h1>Boolean Search Filter Example</h1>
 
-    <div id="BooleanSearch">
-      <b> inline form without checkbox for case sensitivity (default:insensitive)</b>
-      <form id="BooleanSearch_searchForm">
+    <b> User custom form embedded in current page</b>
+    <div id="mybooleansearch">
+      <form id="mybooleansearch_searchForm">
         <input
-          id="BooleanSearch_searchbox"
+          id="mybooleansearch_searchbox"
           type="text"
           placeholder="Type boolean search expression here..."
-          aria-label="Search text"
-          style="width: 500px"
+          aria-label="Type boolean search expression here..."
+          style="
+            width: 500px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+          "
         />
-        <button id="BooleanSearch_button" type="button" aria-label="Do Search">
+        <button id="mybooleansearch_button" type="button" aria-label="Do Search">
           Search
         </button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <label>
+          Case Sensitive <input type="checkbox" id="mybooleansearch_checkbox" />
+        </label>
+        <br />
+        <small>
+          <b>
+            &nbsp;&nbsp;&nbsp;
+            <a href="https://www.npmjs.com/package/boolean-search-filter">
+              boolean search supported</a
+            >:
+          </b>
+          eg. (John OR "Jane Smith") AND NOT journal
+        </small>
       </form>
-      <div id="BooleanSearch_error" style="color: red; font-weight: bold"></div>
-      <div id="BooleanSearch_answer"></div>
+      <div id="mybooleansearch_error" style="color: red; font-weight: bold"></div>
+      <div id="mybooleansearch_answer"></div>
     </div>
 
     <div id="mycontent">

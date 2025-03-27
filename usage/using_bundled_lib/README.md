@@ -63,8 +63,4 @@ npx http-server -a localhost -p 1234 -o
 ```
 
 Note: above setup instructions are in `./setup.bash` and we can cleanup generated
-files with `./clean.bash`. However for convenience the generated files are now
-included in the repository, making it possible to preview the `html` files directly
-without generating code first. For viewing them in action we do need webserver though
-like above `npx http-server`. For vscoded you could also use the 'Live preview'
-extension.
+files with `./clean.bash`.

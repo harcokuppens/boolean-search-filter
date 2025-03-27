@@ -5422,6 +5422,7 @@ class Zn {
     Q(this, "elementsCssSelectorForItems", "li");
     Q(this, "elementsCssSelectorForSectionItems", null);
     Q(this, "highlightingActive", !0);
+    Q(this, "caseSensitive", !1);
     Q(this, "id", "BooleanSearch");
   }
   /**
@@ -5429,16 +5430,15 @@ class Zn {
    * @returns {this} The current instance of BooleanSearch.
    */
   setAutoForm() {
-    const t = `
-        
+    const t = `       
         <form id="${this.id}_searchForm">
-            <input id="${this.id}_searchbox" type="text" aria-label="Type boolean search expression here..." style="width: 500px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; " />
+            <input id="${this.id}_searchbox" type="text" placeholder="Type boolean search expression here..." aria-label="Type boolean search expression here..." style="width: 500px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; " />
             <button id="${this.id}_button" type="button" aria-label="Do Search">
             Search
             </button>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <label>
-            Case Sensitive <input type="checkbox" id="caseSensitiveCheckbox" onclick="toggleCaseSensitive()"> 
+            Case Sensitive <input type="checkbox" id="${this.id}_checkbox" > 
             </label>
             <br>
             <small> <b> &nbsp;&nbsp;&nbsp; <a href="https://www.npmjs.com/package/boolean-search-filter"> boolean search supported</a>: </b> eg. (John OR "Jane Smith") AND NOT journal </small>
@@ -5512,6 +5512,9 @@ class Zn {
   setHighlighting(t) {
     return this.highlightingActive = t, this;
   }
+  toggleCaseSensitive() {
+    console.log("toggleCaseSensitive"), this.caseSensitive = !this.caseSensitive;
+  }
   /**
    * Applies the search functionality to the HTML page.
    */
@@ -5519,22 +5522,22 @@ class Zn {
     this.htmlPageSpecificFilterAndMarkCallback === null && (this.elementsCssSelectorForSectionItems === null ? this.htmlPageSpecificFilterAndMarkCallback = this.elementsPageFilterAndMarkCallback : this.htmlPageSpecificFilterAndMarkCallback = this.sectionedElementsPageFilterAndMarkCallback);
     let t = this;
     document.addEventListener("DOMContentLoaded", function() {
-      const e = document.getElementById(`${t.id}_button`), n = document.getElementById(`${t.id}_searchbox`);
-      document.getElementById(`${t.id}_checkbox`);
-      const s = document.getElementById(`${t.id}_searchForm`), i = document.getElementById(`${t.id}_answer`), r = document.getElementById(`${t.id}_error`);
+      const e = document.getElementById(`${t.id}_button`), n = document.getElementById(`${t.id}_searchbox`), s = document.getElementById(`${t.id}_checkbox`), i = document.getElementById(`${t.id}_searchForm`), r = document.getElementById(`${t.id}_answer`), a = document.getElementById(`${t.id}_error`);
       e && e.addEventListener("click", function() {
         if (n) {
-          const a = n.value;
+          const l = n.value;
           try {
-            i.textContent = "", r.textContent = "", t.searchFilter(a) || (i.textContent = "No matches");
+            r.textContent = "", a.textContent = "", t.searchFilter(l) || (r.textContent = "No matches");
           } catch {
-            r.textContent = "Error in boolean search term", t.searchFilter("fsdjfkjaskfjksdjfksdjflksdjlka");
+            a.textContent = "Error in boolean search term", t.searchFilter("fsdjfkjaskfjksdjfksdjflksdjlka");
           }
         }
-      }), n && e && n.addEventListener("keyup", function(a) {
-        a.key === "Enter" && (a.preventDefault(), e.click(), n.blur(), n.focus());
-      }), s && s.addEventListener("submit", function(a) {
-        a.preventDefault();
+      }), n && e && n.addEventListener("keyup", function(l) {
+        l.key === "Enter" && (l.preventDefault(), e.click(), n.blur(), n.focus());
+      }), s && e && s.addEventListener("click", function() {
+        t.toggleCaseSensitive(), e.click();
+      }), i && i.addEventListener("submit", function(l) {
+        l.preventDefault();
       });
     });
   }
@@ -5583,10 +5586,10 @@ class Zn {
     let n = e.getWords(), s = !1;
     return t.forEach((i, r) => {
       let a = !1;
-      if (i.textContent && (a = e.match(i.textContent)), a ? (s = !0, i.style.display = "") : i.style.display = "none", this.highlightingActive && a && n) {
+      if (i.textContent && (a = e.match(i.textContent, this.caseSensitive)), a ? (s = !0, i.style.display = "") : i.style.display = "none", this.highlightingActive && a && n) {
         jn(i);
         for (const l of n)
-          $n(i, l);
+          $n(i, l, this.caseSensitive);
       }
     }), s;
   }
