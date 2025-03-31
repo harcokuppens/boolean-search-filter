@@ -17,7 +17,10 @@ export class BooleanSearch {
      * Sets the auto-generated search form in the HTML element with the specified ID.
      * @returns {this} The current instance of BooleanSearch.
      */
-    setAutoForm(): this {
+    setAutoForm(subscript?: string): this {
+        if (subscript === undefined) {
+            subscript = '<small> <b> &nbsp;&nbsp;&nbsp; <a href="https://www.npmjs.com/package/boolean-search-filter"> boolean search supported</a>: </b> eg. (John OR "Jane Smith") AND NOT journal </small>';
+        }
         const formString: string = `       
         <form id="${this.id}_searchForm">
             <input id="${this.id}_searchbox" type="text" placeholder="Type boolean search expression here..." aria-label="Type boolean search expression here..." style="width: 500px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; " />
@@ -29,7 +32,7 @@ export class BooleanSearch {
             Case Sensitive <input type="checkbox" id="${this.id}_checkbox" > 
             </label>
             <br>
-            <small> <b> &nbsp;&nbsp;&nbsp; <a href="https://www.npmjs.com/package/boolean-search-filter"> boolean search supported</a>: </b> eg. (John OR "Jane Smith") AND NOT journal </small>
+            ${subscript}
         </form>
         <div id="${this.id}_error" style="color: red; font-weight: bold"></div>
         <div id="${this.id}_answer"></div>

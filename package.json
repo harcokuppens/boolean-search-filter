@@ -1,7 +1,7 @@
 {
     "name": "boolean-search-filter",
     "type": "module",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "library to search items using a boolean expression of words and highlight the words in the result",
     "keywords": [
         "boolean",

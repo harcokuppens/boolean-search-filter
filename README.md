@@ -31,7 +31,7 @@ The source code of this example is at the subfolder `./example/`.
    * [API of the BooleanSearch Class](#api-of-the-booleansearch-class)
       * [Methods](#methods)
          * [setId(id: string)](#setidid-string)
-         * [setAutoForm()](#setautoform)
+         * [setAutoForm(subscript?: string)](#setautoformsubscript-string)
          * [setForm(formString: string)](#setformformstring-string)
          * [setElementsCssSelector(elementsCssSelector: string)](#setelementscssselectorelementscssselector-string)
          * [setSectionElementsCssSelector(sectionElementsCssSelector: string)](#setsectionelementscssselectorsectionelementscssselector-string)
@@ -368,9 +368,14 @@ Sets the ID of the HTML element where the search form will be inserted.
 
 - `this`: The current instance of `BooleanSearch`.
 
-#### `setAutoForm()`
+#### `setAutoForm(subscript?: string)`
 
 Sets the auto-generated search form in the HTML element with the specified ID.
+
+**Parameters:**
+
+- `subscript` (`string`): Optional parameter to give a HTML string for a custom
+  subscript below the automatically added form.
 
 **Returns:**
 
