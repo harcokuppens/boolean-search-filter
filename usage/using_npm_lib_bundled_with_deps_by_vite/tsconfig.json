@@ -1,0 +1,34 @@
+{
+  // we only use tsc to create .d.ts and .d.ts.map files for vite projects (no need to include test/**/*.ts which has no exported types)
+  "include": ["src/**/*.ts"],
+
+  "compilerOptions": {
+    // target modern javascript and module system, and use vite bundler for module resolution (also uses node.js modules)
+    "target": "es2022", // how modern the javascript code is which gets generated
+    "module": "es2022",
+    "moduleResolution": "bundler", // let vite do module resolution
+
+    // output build library to dist folder
+    "outDir": "dist",
+
+    // create source maps for debugging (in the dist folder)
+    "sourceMap": true,
+    // inline source in map file
+    "inlineSources": true,
+
+    // add declaration files and map files to their ts source in the dist folder in the types folder
+    "declarationDir": "./types/", // vscode cannot find it there! => must be in dist
+    "declaration": true, // create .d.ts file for each .ts source file
+    "declarationMap": true, // create .d.ts.map file for each .ts source file which maps declaration in .d.ts to .ts file
+    "emitDeclarationOnly": true, // for vite projects where tsc is only used to create .d.ts and .d.ts.map files
+
+    // more options
+    "removeComments": true,
+    "noImplicitAny": true,
+    "isolatedModules": false,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "strictNullChecks": true,
+    "allowJs": true // Allow importing JavaScript files (important for `antlr4` runtime).
+  }
+}
