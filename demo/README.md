@@ -4,11 +4,12 @@ We demonstrate the `BooleanSearch` library by providing demo folders, where each
 folder can be deployed on a webserver and will just work. This folder contains two
 demo's:
 
-1. `html_using_bundled_lib/` <br><br> This demo uses a bundled library file which
-   consist of the npm package providing the BooleanSearch library bundled with all
-   its npm dependent packages bundle into a single. The `index.html` contains the
-   javascript which loads the BooleanSearch library and applies it to the current
-   example. This main code looks like:
+1. `html_using_bundled_lib/`
+   **[click here to view the demo live](https://raw.githack.com/harcokuppens/boolean-search-filter/231258623d2f8bde1bddc4962b8a04d4cc1fb9d7/demo/html_using_bundled_lib/index.html)**<br><br>
+   This demo uses a bundled library file which consist of the npm package providing
+   the BooleanSearch library bundled with all its npm dependent packages bundle into
+   a single. The `index.html` contains the javascript which loads the BooleanSearch
+   library and applies it to the current example. This main code looks like:
 
    ```html
    <html>
@@ -28,11 +29,12 @@ demo's:
 
    <br>This demo is explained in detail in `usage/using_bundled_lib/`.
 
-2. `vite_bundled_app/` <br><br> This demo is the result of the vite tool bundling all
-   typescript of the webpage index.html, containing both the main code, and the
-   library code into a single `bundle.js` file. The `index.html` only loads this
-   `bundle.js` file which is then automatically is applied to the current html file.
-   The code looks like:
+2. `vite_bundled_app/`
+   **[click here to view the demo live](https://raw.githack.com/harcokuppens/boolean-search-filter/231258623d2f8bde1bddc4962b8a04d4cc1fb9d7/demo/vite_bundled_app/index.html)**<br><br>
+   This demo is the result of the vite tool bundling all typescript of the webpage
+   index.html, containing both the main code, and the library code into a single
+   `bundle.js` file. The `index.html` only loads this `bundle.js` file which is then
+   automatically is applied to the current html file. The code looks like:
 
    ```html
    <html>

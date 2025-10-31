@@ -7,7 +7,7 @@ with a checkbox be done either case sensitive or case insensitive.
 
 Below image shows the boolean search filter library in action. You can also see the
 library directly in action look at the following
-[url](https://raw.githack.com/harcokuppens/boolean-search-filter/ac1f976ebc9feac38f76909d952ef25e6996775e/example/index.html).
+[url](https://raw.githack.com/harcokuppens/boolean-search-filter/231258623d2f8bde1bddc4962b8a04d4cc1fb9d7/demo/html_using_bundled_lib/index.html).
 The source code of this example is at the subfolder `./example/`.
 
 <img src="boolean_search_example.jpg" alt="example of Boolean search filter" style="display: block;width:70%;margin-left:auto;margin-right:auto;"/>
@@ -56,7 +56,7 @@ Highlighting is done with the
 ## Online example
 
 To see the boolean search filter library directly in action look at the following
-[url](https://raw.githack.com/harcokuppens/boolean-search-filter/ac1f976ebc9feac38f76909d952ef25e6996775e/example/index.html).
+[url](https://raw.githack.com/harcokuppens/boolean-search-filter/231258623d2f8bde1bddc4962b8a04d4cc1fb9d7/demo/html_using_bundled_lib/index.html).
 The source code of this example is at the subfolder `./example/`.
 
 ## Boolean expression
