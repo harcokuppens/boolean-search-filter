@@ -33,7 +33,7 @@
         "prebuild": "npm install # makes sure the dependencies are installed before building",
         "build": "tsc && vite build",
         "buildbundled": "tsc && vite -c vite.config.bundledlib.ts build",
-        "prepublishOnly": "npm run build",
+        "prepack": "npm run clean && npm run build",
         "lint": "tslint -c tslint.json src/*.ts",
         "clean": "rm -rf dist/ dist_bundledlib/ types/ ",
         "cleanall": "npm run clean ; rm -rf  node_modules/"

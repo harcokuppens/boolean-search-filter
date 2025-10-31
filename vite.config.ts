@@ -3,6 +3,9 @@ import { defineConfig } from 'vite';
 // build lib with all dependencies excluded; 
 // app using this lib will have to include all dependencies which goes automatically with npm install
 export default defineConfig({
+
+    // 👇 Treat the `examples` folder as the root for dev server
+    root: 'examples',
     // without base, the default is "base: '/'"
     //base: '/dist/', //   Vite will generate absolute paths from /dist/ ]
     base: '', // use an empty base to make vite generate relatieve paths => then you are free to move the dist folder anywhere on the web server!
