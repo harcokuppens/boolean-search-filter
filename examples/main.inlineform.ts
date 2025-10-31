@@ -1,6 +1,6 @@
 import { BooleanSearch } from '../src/BooleanSearch.ts';
 
-const customId = "BooleanSearch";
+const customId = "mybooleansearch";
 const sectionElementsCssSelector = "#mycontent > h1";
 const elementsCssSelector = "li";
 new BooleanSearch().setId(customId)
